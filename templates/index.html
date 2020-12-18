@@ -4,14 +4,14 @@
 {% block content%}<div class="d-block">
     <div class="card" id="cb">
         <form class="form" action="/usuarios" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="text" class="form-control mb-2" name="user" placeholder="Insert user" autofocus>
+            <!-- <input type="hidden" name="csrf_token" value="TOKEN_CRSF" /> -->
+            <input type="text" class="form-control mb-2" id="user" name="user" placeholder="Insert user" autofocus>
             <input type="text" class="form-control mb-2" name="password" placeholder="Insert password">
             <button id="btn_get" class="btn btn-success mx-auto w-25" type="submit" style="display: block">Iniciar
                 sesión</button>
-            <script>
-                let csrf_token = "{{ csrf_token() }}";
-            </script>
+            <!-- <script>
+                let csrf_token = "TOKEN_CSRF;
+            </script> -->
             <button id="btn_loading" class="btn btn-primary mx-auto w-25" type="button" style="display: none"
                 disabled><span id="span_msg" class="spinner-grow spinner-grow-sm" role="status"
                     aria-hidden="true"></span>

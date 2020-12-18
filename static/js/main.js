@@ -8,14 +8,45 @@ $(document).ready(function () {
   $("#cb form").on("submit", function (e) {
     e.preventDefault();
 
+    // $.ajax({
+    //   beforeSend: function (xhr, settings) {
+    //     if (
+    //       !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+    //       !this.crossDomain
+    //     ) {
+    //       xhr.setRequestHeader("X-CSRFToken", csrf_token);
+    //     }
+    //     console.clear();
+    //     console.log("Consultado...");
+    //     $("#btn_get").hide();
+    //     btn_loading.style.display = "block";
+    //     $("#btn_loading").show();
+    //     msg_btn.innerText = " Iniciando sesión...";
+    //   },
+    //   url: action,
+    //   type: method,
+    //   data: $("#cb form").serialize(),
+    //   success: function (info) {
+    //     console.log(info);
+    //     // info.forEach((info) => {
+    //     //   console.log(`U: ${info.usuario} P: ${info.password}`);
+    //     // });
+    //     $("#btn_loading").hide();
+    //     btn_get.innerText = "Sesión iniciada";
+    //     $("#btn_get")
+    //       .removeClass(["btn-danger", "btn-primary"])
+    //       .addClass(["btn-success"]);
+    //     //btn_get.disabled = true;
+    //     $("#btn_get").show();
+    //   }
     $.ajax({
       beforeSend: function (xhr, settings) {
-        if (
-          !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
-          !this.crossDomain
-        ) {
-          xhr.setRequestHeader("X-CSRFToken", csrf_token);
-        }
+        // if (
+        //   !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+        //   !this.crossDomain
+        // ) {
+        //   xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        // }
         console.clear();
         console.log("Consultado...");
         $("#btn_get").hide();
@@ -25,11 +56,18 @@ $(document).ready(function () {
       },
       url: action,
       type: method,
-      data: $("#cb form").serialize(),
+      //contentType: "application/json",
+      data: JSON.stringify(
+        $("#cb form")
+          .serializeArray()
+          .reduce(function (a, z) {
+            a[z.name] = z.value;
+            return a;
+          }, {})
+      ),
+      dataType: "json",
       success: function (info) {
-        console.log(
-          `Logged: ${info.logged} Msg: ${info.msg} Status: ${info.status}`
-        );
+        console.log(info);
         // info.forEach((info) => {
         //   console.log(`U: ${info.usuario} P: ${info.password}`);
         // });
