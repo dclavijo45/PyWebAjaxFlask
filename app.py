@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session, url_for
 
 # from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
@@ -31,8 +31,8 @@ def home():
     return render_template("/home/index.html")
 
 
-@app.route("/usuarios", methods=["POST", "GET"])
-def usuarios():
+@app.route("/login", methods=["POST", "GET"])
+def login():
     if request.method == "POST":
         if "id" in session:
             print("Hay session: " + str(session["id"]))
@@ -49,19 +49,84 @@ def usuarios():
             correo = col[5]
             clave = str(col[8])
             if correo == datares["correo"] and clave == datares["clave"]:
-                jsonfy = {"status": 200, "msg": "Login success", "Logged": True}
+                jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
                 logged = True
                 session["id"] = id
                 break
         if logged != True:
             jsonfy = {
                 "status": 499,
-                "msg": "Login failed, user or pwd error",
+                "msg": "Usuario o contraseña incorrecto",
                 "Logged": False,
             }
     else:
-        jsonfy = {"status": 499, "msg": "Access only for method POST", "Logged": False}
+        jsonfy = {"status": 405, "msg": "Access only for method POST", "Logged": False}
     return jsonify(jsonfy), 200
+
+
+@app.route("/registeruser", methods=["POST"])
+def registerUser():
+    # if 'id' in session:
+    #     return url_for('login')
+    if request.method == "POST":
+        if "id" in session:
+            print("Hay session: " + str(session["id"]))
+        Access = True
+        jsonfy = {}
+        datares = request.get_json(force=True)
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios")
+        data = con.fetchall()
+        con.close()
+        jsonfy = {}
+        for col in data:
+            # id = col[0]
+            correo = col[5]
+            if correo == datares["correo"]:
+                Access = False
+                break
+        if Access == False:
+            jsonfy = {
+                "status": 406,
+                "msg": "Ya existe un usuario con ese correo",
+                "Logged": False,
+            }
+        else:
+            conR = mysql.connection.cursor()
+            conR.execute("INSERT INTO usuarios (nombres, apellidos, tipo_identificacion, num_identificacion, correo, clave_usuario) VALUES (%s,%s,%s,%s,%s,%s)", (datares["nombres"],datares["apellidos"],datares["tipo_identificacion"],datares["num_documento"],datares["correo"],datares["clave"],))
+            mysql.connection.commit()
+            if conR.rowcount >= 1:
+                conR.close()
+                conL = mysql.connection.cursor()
+                conL.execute("SELECT id FROM usuarios  WHERE correo=%s",(datares['correo'],))
+                dataL = conL.fetchall()
+                for col in data:
+                    session['id'] = col[0]
+                conL.close()
+                jsonfy = {
+                    "status": 201,
+                    "msg": "Registrado correctamente",
+                    "Logged": True,
+                }
+            else:
+                jsonfy = {
+                    "status": 412,
+                    "msg": "Problemas al registrarse",
+                    "Logged": False,
+                }
+                conR.close()
+
+    else:
+        jsonfy = {"status": 405, "msg": "Access only for method POST", "Logged": False}
+    return jsonify(jsonfy), 200
+
+
+@app.route("/register", methods=["POST", "GET"])
+def register():
+    # if 'id' in session:
+    #     return url_for('login')
+
+    return render_template('/home/register.html')
 
 
 if __name__ == "__main__":
