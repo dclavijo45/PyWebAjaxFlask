@@ -2,5 +2,35 @@
 {%block title%}Register : LiveOne{%endblock%}
 
 {%block content%}
+<div class="container container-fluid">
+    <div id="cb" class="mx-auto p-4 mt-4 w-50 border border-2">
+        <form action="{{url_for('registerUser')}}" class="form" method="POST">
+            <input type="text" class="form-control mb-4 mx-auto w-75" placeholder="Digite su nombre" name="nombres"
+                id="nombres" title="Digite su nombre" autofocus required>
+            <input type="text" class="form-control mb-4 mx-auto w-75" placeholder="Digite sus apellidos"
+                name="apellidos" id="apellidos" title="Digite sus apellidos" required>
+            <select class="form-control mb-4 mx-auto w-75 d-block" name="tipo_identificacion" id="tipo_identificacion"
+                title="Elija un tipo de documento" required>
+                <option selected hidden value="">Elija un tipo de documento</option>
+                <option value="TI">Targeta de identidad</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="CE">Cédula de extranjería</option>
+            </select>
+            <input type="number" class="form-control mb-4 mx-auto w-75" placeholder="Número de documento"
+                title="Número de documento" name="num_documento" id="num_documento" required>
+            <input type="email" placeholder="Digite su correo" class="form-control mb-4 mx-auto w-75"
+                title="Digite su correo" name="correo" id="correo" required>
+            <input type="password" class="form-control mb-4 mx-auto w-75" placeholder="Digite su contraseña"
+                title="Digite su contraseña" name="clave" id="clave" required>
+            <button id="btn_get" class="btn btn-success w-50 mx-auto" style="display: block"
+                type="submit">Registrarse</button>
 
+            <button id="btn_loading" class="btn btn-primary mx-auto w-50" type="button" style="display: none"
+                disabled><span id="span_msg" class="spinner-grow spinner-grow-sm" role="status"
+                    aria-hidden="true"></span>
+                <span id="msg_btn"></span>
+        </form>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
 {%endblock%}

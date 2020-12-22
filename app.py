@@ -64,11 +64,12 @@ def login():
     return jsonify(jsonfy), 200
 
 
-@app.route("/registeruser", methods=["POST"])
+@app.route("/registeruser", methods=['POST', 'GET'])
 def registerUser():
     # if 'id' in session:
     #     return url_for('login')
     if request.method == "POST":
+        sleep(1)
         if "id" in session:
             print("Hay session: " + str(session["id"]))
         Access = True
@@ -82,13 +83,15 @@ def registerUser():
         for col in data:
             # id = col[0]
             correo = col[5]
-            if correo == datares["correo"]:
+            clave = col[4]
+            print(datares["clave"])
+            if correo == datares["correo"] or clave == str(datares["num_documento"]):
                 Access = False
                 break
         if Access == False:
             jsonfy = {
                 "status": 406,
-                "msg": "Ya existe un usuario con ese correo",
+                "msg": "Ya existe este usuario",
                 "Logged": False,
             }
         else:
