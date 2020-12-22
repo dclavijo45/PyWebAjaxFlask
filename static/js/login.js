@@ -21,7 +21,7 @@ $(document).ready(function () {
         $("#btn_get").hide();
         btn_loading.style.display = "block";
         $("#btn_loading").show();
-        msg_btn.innerText = "Registrando...";
+        msg_btn.innerText = "Iniciando sesión...";
       },
       url: action,
       type: method,
@@ -41,12 +41,12 @@ $(document).ready(function () {
           btn_get.innerText = info.msg;
           btn_get.disabled = true;
           setTimeout(() => {
-            alert("Redirect to admin");
-          }, 2000);
+            window.location.href = "/cpadmin";
+          }, 1000);
         } else {
           btn_get.innerText = info.msg;
           setTimeout(() => {
-            btn_get.innerText = "Registrarse";
+            btn_get.innerText = "Iniciar sesión";
           }, 2000);
         }
         $("#btn_get")
@@ -58,7 +58,7 @@ $(document).ready(function () {
         console.log(`Estado: ${status}`);
         console.log(`Error: ${error}`);
         $("#btn_loading").hide();
-        btn_get.innerText = "Error al registrarse";
+        btn_get.innerText = "Error de inicio de sesión";
         $("#btn_get")
           .removeClass(["btn-sucess", "btn-primary"])
           .addClass(["btn-danger"]);

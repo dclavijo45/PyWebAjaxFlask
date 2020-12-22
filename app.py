@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session, url_for
+from flask import Flask, request, jsonify, render_template, session, url_for, json, redirect
 
 # from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
@@ -31,9 +31,10 @@ def home():
     return render_template("/home/index.html")
 
 
-@app.route("/login", methods=["POST", "GET"])
+@app.route("/login", methods=['POST', 'GET'])
 def login():
     if request.method == "POST":
+        sleep(1)
         if "id" in session:
             print("Hay session: " + str(session["id"]))
         logged = False
@@ -124,13 +125,50 @@ def registerUser():
     return jsonify(jsonfy), 200
 
 
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/register", methods=['POST', 'GET'])
 def register():
-    # if 'id' in session:
-    #     return url_for('login')
+    if 'id' in session:
+        return url_for('login')
 
     return render_template('/home/register.html')
 
+@app.route("/cpadmin")
+def accessAdmin():
+    if "id" in session:
+        usuarioLogueado = ""
+        foto_perfil = ""
+        sesionActual = session['id']
+        logged = False
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios WHERE id = %s",(sesionActual,))
+        data = con.fetchall()
+        con.close()
+        jsonfy = {}
+        for col in data:
+            id = col[0]
+            foto_perfil = col[6]
+            if id == sesionActual:
+                usuarioLogueado = col[1]
+                jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
+                logged = True
+                session["id"] = id
+                break
+        if logged != True:
+            jsonfy = {
+                "status": 499,
+                "msg": "Usuario o contraseña incorrecto",
+                "Logged": False,
+            }
+            return url_for('login')
+        return render_template("/admin/cpAdmin.html", foto_perfil = foto_perfil, usuario=usuarioLogueado, status = json.dumps(jsonfy, ensure_ascii=False))
+    else:
+        return "Not logged"
+
+@app.route("/logout")
+def logoutUser():
+    if 'id' in session:
+        session.pop('id', None)
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080, host="localhost")

@@ -1,0 +1,31 @@
+{%extends 'baseAdmin.html'%}
+
+{%block title%}Admin : LiveOne{%endblock%}
+
+{%block content%}
+<script>let statusres = {{ status | tojson }}; statusres = JSON.parse(statusres); console.log(statusres);</script>
+<div class="w-100" style="">
+    <h2>Balance de esta semana</h2>
+    <p class="text-muted">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione quae nulla d</p>
+</div>
+<!-- <div class="w-100 "> -->
+<div class="p-3 bg-primary" style="height: 20%; width: 320px;margin-right: 1%;">
+    <i class="fas fa-users mx-2 text-light" style="font-size: 20px;"></i>
+    <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Clientes registrados</small>
+    <h3 class="text-center text-light fw-bolder">220</h3>
+    <small class="text-center text-light d-block" style="opacity: 0.7;">restante 220/440 - 50%</small>
+</div>
+<div class="p-3 bg-success" style="height: 20%; width: 320px;margin-right: 1%;">
+    <i class="fas fa-dollar-sign mx-2 text-light" style="font-size: 20px;"></i>
+    <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Capital total hasta hoy</small>
+    <h3 class="text-center text-light fw-bolder" style="opacity: 0.9;">22400000</h3>
+    <small class="text-center text-light d-block" style="opacity: 0.7;">Total sin estimar gastos extras</small>
+</div>
+<div class="p-3 bg-danger" style="height: 20%; width: 320px;margin-right: 1%;">
+    <i class="fas fa-users mx-2 text-light" style="font-size: 20px;"></i>
+    <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Volumen de producto</small>
+    <h3 class="text-center text-light fw-bolder">220 L</h3>
+    <small class="text-center text-light d-block" style="opacity: 0.7;">restante 220/440 - 50%</small>
+</div>
+<!-- </div> -->
+{%endblock%}
