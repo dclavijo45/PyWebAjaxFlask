@@ -1,31 +1,170 @@
 {%extends 'baseAdmin.html'%}
 
 {%block title%}Admin : LiveOne{%endblock%}
+{%block head%}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{%endblock%}
 
 {%block content%}
 <script>let statusres = {{ status | tojson }}; statusres = JSON.parse(statusres); console.log(statusres);</script>
 <div class="w-100" style="">
-    <h2>Balance de esta semana</h2>
+    <h2 class="" style="font-family: sans-serif;">Balance de esta semana</h2>
     <p class="text-muted">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione quae nulla d</p>
 </div>
 <!-- <div class="w-100 "> -->
-<div class="p-3 bg-primary" style="height: 20%; width: 320px;margin-right: 1%;">
+<div id="BoxClientes" class="p-3 bg-primary mx-auto" style="height: 20%; width: 320px">
     <i class="fas fa-users mx-2 text-light" style="font-size: 20px;"></i>
-    <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Clientes registrados</small>
+    <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Clientes alcanzados</small>
     <h3 class="text-center text-light fw-bolder">220</h3>
     <small class="text-center text-light d-block" style="opacity: 0.7;">restante 220/440 - 50%</small>
 </div>
-<div class="p-3 bg-success" style="height: 20%; width: 320px;margin-right: 1%;">
+<div id="BoxCapital" class="p-3 bg-success mx-auto" style="height: 20%; width: 320px">
     <i class="fas fa-dollar-sign mx-2 text-light" style="font-size: 20px;"></i>
     <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Capital total hasta hoy</small>
     <h3 class="text-center text-light fw-bolder" style="opacity: 0.9;">22400000</h3>
     <small class="text-center text-light d-block" style="opacity: 0.7;">Total sin estimar gastos extras</small>
 </div>
-<div class="p-3 bg-danger" style="height: 20%; width: 320px;margin-right: 1%;">
-    <i class="fas fa-users mx-2 text-light" style="font-size: 20px;"></i>
+<div class="p-3 bg-danger mx-auto" style="height: 20%; width: 320px">
+    <i class="fas fa-database mx-2 text-light" style="font-size: 20px;"></i>
     <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Volumen de producto</small>
     <h3 class="text-center text-light fw-bolder">220 L</h3>
-    <small class="text-center text-light d-block" style="opacity: 0.7;">restante 220/440 - 50%</small>
+    <small class="text-center text-light d-block" style="background-color: rgba(255, 255, 255, 0.2);">Total
+        sin estimar pérdidas
+        generadas</small>
 </div>
 <!-- </div> -->
-{%endblock%}
+<div id="ChartAdminP" class="border mt-3 mx-auto bg-light p-4 border-3" style="max-height: 387px;">
+    <canvas id="canvas"></canvas>
+</div>
+<div id="ListUsersAdminR" class="border mt-3 mx-auto bg-light p-4 border-3">
+    <div>
+        <h5 class="fw-bold" style="font-family: sans-serif; font-size: 18px;color:rgb(118, 122, 170)">REGISTRO DE
+            CLIENTES
+        </h5>
+        <small class="fst-italic"><i class="fas fa-list-alt"></i> Fecha actual: 22/12/2020 - Martes</small>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+    <hr>
+    <div class="">
+        <h6 class="d-inline">User reg 1</h6>
+        <h6 class="text-muted d-inline">Martes - 22</h6>
+    </div>
+</div>
+<script>
+    function randomScalingFactor() {
+        return Math.trunc(Math.random() * 5000)
+    }
+    let chartColors = {
+        red: 'rgb(255, 99, 132)',
+        orange: 'rgb(255, 159, 64)',
+        yellow: 'rgb(255, 205, 86)',
+        green: 'rgb(75, 192, 192)',
+        blue: 'rgb(54, 162, 235)',
+        purple: 'rgb(153, 102, 255)',
+        grey: 'rgb(201, 203, 207)'
+    };
+    let config = {
+        type: 'line',
+        data: {
+            labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
+            datasets: [{
+                label: 'Semana pasada',
+                borderColor: chartColors.orange,
+                backgroundColor: chartColors.yellow,
+                data: [
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor()
+                ],
+            }, {
+                label: 'Semana actual',
+                borderColor: chartColors.purple,
+                backgroundColor: chartColors.blue,
+                data: [
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor()
+                ],
+            },
+            ]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Estado de ventas'
+            },
+            tooltips: {
+                mode: 'index',
+            },
+            hover: {
+                mode: 'index'
+            },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Dias'
+                    }
+                }],
+                yAxes: [{
+                    stacked: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Cantidad'
+                    }
+                }]
+            }
+        }
+    };
+    let ctx = document.getElementById('canvas').getContext('2d');
+    let myLine = new Chart(ctx, config);
+</script>
+{% endblock %}
