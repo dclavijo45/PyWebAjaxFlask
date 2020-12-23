@@ -7,11 +7,9 @@
 
 {%block content%}
 <script>let statusres = {{ status | tojson }}; statusres = JSON.parse(statusres); console.log(statusres);</script>
-<div class="w-100" style="">
-    <h2 class="" style="font-family: sans-serif;">Balance de esta semana</h2>
-    <p class="text-muted">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione quae nulla d</p>
+<div class="w-100">
+    <h2 class="mb-4 text-center" style="font-family: sans-serif;">Balance de esta semana</h2>
 </div>
-<!-- <div class="w-100 "> -->
 <div id="BoxClientes" class="p-3 bg-primary mx-auto" style="height: 20%; width: 320px">
     <i class="fas fa-users mx-2 text-light" style="font-size: 20px;"></i>
     <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Clientes alcanzados</small>
@@ -21,7 +19,7 @@
 <div id="BoxCapital" class="p-3 bg-success mx-auto" style="height: 20%; width: 320px">
     <i class="fas fa-dollar-sign mx-2 text-light" style="font-size: 20px;"></i>
     <small class="text-light text-center mx-3" style="opacity: 0.7; font-size: 18px;">Capital total hasta hoy</small>
-    <h3 class="text-center text-light fw-bolder" style="opacity: 0.9;">484000</h3>
+    <h3 class="text-center text-light fw-bolder" style="opacity: 0.9;">1484000</h3>
     <small class="text-center text-light d-block" style="opacity: 0.7;">Total sin estimar gastos extras</small>
 </div>
 <div class="p-3 bg-danger mx-auto" style="height: 20%; width: 320px">
@@ -32,111 +30,90 @@
         sin estimar pérdidas
         generadas</small>
 </div>
-<!-- </div> -->
 <div id="ChartAdminP" class="border mt-3 mx-auto bg-light p-4 border-3" style="max-height: 387px;">
     <canvas id="canvas"></canvas>
 </div>
+
 <div id="ListUsersAdminR" class="border mt-3 mx-auto bg-light p-4 border-3">
     <div>
-        <h5 class="fw-bold" style="font-family: sans-serif; font-size: 18px;color:rgb(118, 122, 170)">REGISTRO DE
-            CLIENTES
+        <h5 class="fw-bold d-inline-block" style="font-family: sans-serif; font-size: 18px;color:#505de9; width: 49%;">
+            REGISTRO DE CLIENTES
         </h5>
-        <small class="fst-italic"><i class="fas fa-list-alt"></i> Fecha actual: 22/12/2020 - Martes</small>
+        <h5 class="fw-bold d-inline-block"
+            style="width: 43.5%; text-align: right;font-family: sans-serif; font-size: 18px;color: #8d92bb;">
+            AGREGAR REGISTRO
+        </h5>
+        <i id="btnAddReg" class="far fa-plus-square d-inline-block"
+            style="width: 5.5%; text-align: right; font-size: 20px; color: #171527;cursor: pointer;"></i>
+        <small class="fst-italic"><i class="fas fa-list-alt"></i> Fecha actual: 22/12/2020 -
+            Martes</small>
+        <hr class="mb-0 mt-1">
     </div>
-    <div class="d-block mt-1">
-        <small class="" style="display: inline-block;width:24%">Cliente</small>
-        <small class="text-center" style="display: inline-block;width: 24%;">Registrado:</small>
+    <div id="BoxLabelsListUsersReg" class="mt-1" style="display: block;">
+        <small class="text-center" style="display: inline-block;width:24%">Cliente</small>
+        <small class="text-center" style="display: inline-block;width: 24%;">Registrado el</small>
         <small class="text-center" style="display: inline-block; width: 24%;">Volumen</small>
         <small class="text-center" style="display: inline-block;width: 12%;">Capital</small>
         <small style="float: right;">Opción</small>
     </div>
-    <hr class="mt-0">
-    <div class="d-block">
-        <h6 class="" style="display: inline-block;width:24%">User reg 1</h6>
-        <h6 class="text-muted text-center" style="display: inline-block;width:24%">Martes/12/22</h6>
-        <h6 class="text-center" style="display: inline-block;width:24%">220</h6>
-        <h6 class="text-center" style="display: inline-block;">1484000</h6>
-        <i class="fa fa-bars text-primary optionsBarUserAdmin" style="font-size: 16px; float: right;"></i>
+    <!--System add register-->
+    <div id="BoxLabelsAddReg" class="mt-1" style="display: none;">
+        <small class="text-center" style="display: inline-block;width:24%">Cliente</small>
+        <small class="text-center" style="display: inline-block;width: 24%;">Registrar como</small>
+        <small class="text-center" style="display: inline-block; width: 24%;">Volumen</small>
+        <small class="text-center" style="display: inline-block;width: 12%;">Precio</small>
+        <small style="float: right;">Opción</small>
     </div>
-    <hr>
+    <hr class="mt-0">
+    <span id="ListUsersAdmin">
+        <div class="d-block">
+            <h6 class="text-center" style="display: inline-block;width:24%">User reg 1</h6>
+            <!--Perfomance: 11 Char-->
+            <h6 class="text-muted text-center" style="display: inline-block;width:24%">Martes/12/22</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%">220</h6>
+            <h6 class="text-center" style="display: inline-block;">1484000</h6>
+            <h6 class="text-center" style="display: block;float: right;">
+                <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+                <i class="far fa-trash-alt text-danger optionsBarUserAdmin" title="Borrar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+            </h6>
+        </div>
+        <hr>
+        <div class="d-block">
+            <h6 class="text-center" style="display: inline-block;width:24%">Username 1</h6>
 
+            <h6 class="text-muted text-center" style="display: inline-block;width:24%">Jueves/12/22</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%">1220</h6>
+            <h6 class="text-center" style="display: inline-block;">1484000</h6>
+            <h6 class="text-center" style="display: block;float: right;">
+                <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+                <i class="far fa-trash-alt text-danger optionsBarUserAdmin" title="Borrar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+            </h6>
+        </div>
+        <hr>
+    </span>
+    <!--System add register-->
+    <span class="form-group" id="BoxAddReg" style="display: none;">
+        <form action="/cpaddreg" method="POST">
+            <select class="form-control d-inline-block text-center" style="width: 24%;" name="" id="" required>
+                <option selected hidden value="">Seleccionar</option>
+                <option value="1">user1</option>
+                <option value="2">user2</option>
+            </select>
+            <input class="form-control d-inline-block" style="width: 24%;" type="date" id="datenow" required>
+            <input class="form-control d-inline-block text-center" type="number" style="width: 23%" name="" id=""
+                placeholder="Cantidad" value="1" autofocus required>
+            <input class="form-control d-inline-block text-center" type="number" style="width: 16.4%" name=""
+                id="InputPricecpa" value="2400">
+            <i id="btnSaveRegistercpa" class="fas fa-times text-danger mx-auto" style="margin-left: 2px;cursor:pointer"
+                title="No guardar"></i>
+            <i class="fas fa-check text-success" style="margin-left: 2px;cursor:pointer" title="Guardar"></i>
+            <!--Toma el valor de acuerdo a la seleccion en el select-->
+        </form>
+    </span>
 </div>
-<script>
-    function randomScalingFactor() {
-        return Math.trunc(Math.random() * 5000)
-    }
-    let chartColors = {
-        red: 'rgb(255, 99, 132)',
-        orange: 'rgb(255, 159, 64)',
-        yellow: 'rgb(255, 205, 86)',
-        green: 'rgb(75, 192, 192)',
-        blue: 'rgb(54, 162, 235)',
-        purple: 'rgb(153, 102, 255)',
-        grey: 'rgb(201, 203, 207)'
-    };
-    let config = {
-        type: 'line',
-        data: {
-            labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
-            datasets: [{
-                label: 'Semana pasada',
-                borderColor: chartColors.orange,
-                backgroundColor: chartColors.yellow,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-            }, {
-                label: 'Semana actual',
-                borderColor: chartColors.purple,
-                backgroundColor: chartColors.blue,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-            },
-            ]
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Estado de ventas'
-            },
-            tooltips: {
-                mode: 'index',
-            },
-            hover: {
-                mode: 'index'
-            },
-            scales: {
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Dias'
-                    }
-                }],
-                yAxes: [{
-                    stacked: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Cantidad'
-                    }
-                }]
-            }
-        }
-    };
-    let ctx = document.getElementById('canvas').getContext('2d');
-    let myLine = new Chart(ctx, config);
-</script>
+<script src="{{url_for('static', filename='js/cpAdmin.js')}}"></script>
 {% endblock %}
