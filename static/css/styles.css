@@ -80,6 +80,11 @@ header {
     max-height: 487px;
   }
 }
+/* @media (max-width: 770px) {
+  .optionsBarUserAdmin {
+    margin-left: 73.2%;
+  }
+} */
 @media (max-width: 1016px) {
   #ChartAdminP {
     width: 100%;
