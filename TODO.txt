@@ -1,1 +1,3 @@
-En CPAdmin colocar el precio de paga por unidad de producto en un title
+En CPAdmin colocar el precio de paga por unidad de producto en un title.
+
+Añadir sección para ver información de clientes por dia.

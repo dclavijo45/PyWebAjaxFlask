@@ -164,15 +164,47 @@ def accessAdmin():
     else:
         return "Not logged"
 
+@app.route('/cpacustomers')
+def cpaCustomers():
+    if "id" in session:
+        userinfo = {}
+        sesionActual = session['id']
+        logged = False
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios WHERE id = %s",(sesionActual,))
+        data = con.fetchall()
+        con.close()
+        jsonfy = {}
+        for col in data:
+            id = col[0]
+            if id == sesionActual:
+                jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
+                logged = True
+                session["id"] = id
+                userinfo  = {
+                    "username": col[1],
+                    "lastname": col[2],
+                    "profile_image": col[6]
+                }
+                break
+        if logged != True:
+            jsonfy = {
+                "status": 499,
+                "msg": "Usuario o contraseña incorrecto",
+                "Logged": False,
+                }
+            return url_for('login')
+        # return logged
+        return render_template("/admin/cpaCustomers.html", status = json.dumps(jsonfy, ensure_ascii=False), userinfo = json.dumps(userinfo, ensure_ascii=False))    
+    else:
+        return "Not logged"
+
 @app.route("/logout")
 def logoutUser():
     if 'id' in session:
         session.pop('id', None)
     return redirect(url_for('index'))
 
-@app.route("/testc")
-def testChart():
-    return render_template("/admin/chartTest.html")
 
 if __name__ == "__main__":
     app.run(debug=True, host='localhost', port=80)

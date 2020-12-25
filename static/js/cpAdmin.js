@@ -1,3 +1,4 @@
+// chart info
 function randomScalingFactor() {
   return Math.trunc(Math.random() * 5000);
 }
