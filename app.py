@@ -128,15 +128,12 @@ def registerUser():
 @app.route("/register", methods=['POST', 'GET'])
 def register():
     if 'id' in session:
-        return url_for('login')
-
+        session.pop('id', None)
     return render_template('/home/register.html')
 
 @app.route("/cpadmin")
 def accessAdmin():
     if "id" in session:
-        usuarioLogueado = ""
-        foto_perfil = ""
         sesionActual = session['id']
         logged = False
         con = mysql.connection.cursor()
@@ -146,21 +143,83 @@ def accessAdmin():
         jsonfy = {}
         for col in data:
             id = col[0]
-            foto_perfil = col[6]
             if id == sesionActual:
-                usuarioLogueado = col[1]
                 jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
                 logged = True
                 session["id"] = id
-                break
+                con2 = mysql.connection.cursor()
+                con2.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
+                data2 = con2.fetchall()
+                con2.close()
+                if len(data2) == 0:
+                    userinfo  = {
+                        "username": col[1],
+                        "lastname": col[2],
+                        "profile_image": col[6],
+                        "customers": {
+                            "status": False,
+                            "id": [],
+                            "total": 0,
+                            "name": [],
+                            "lastname": [],
+                            "email": [],
+                            "profile_image": [],
+                            "client_status": []
+                        },
+                        "reports": {
+                            "status": False
+                        }
+                    }
+                else:
+                    # region clientes
+                    idcus = []
+                    namecus = []
+                    lastnamecus = []
+                    emailcus = []
+                    profile_imagecus = []
+                    client_statuscus = []
+                    totalcus = 0
+                    for cus in data2:
+                        idcus.append(cus[0])
+                        namecus.append(cus[1])
+                        lastnamecus.append(cus[2])
+                        emailcus.append(cus[5])
+                        profile_imagecus.append(cus[6])
+                        client_statuscus.append(cus[8])
+                        totalcus+= 1 
+                    #endregion
+
+                    # region reportes
+                    cliente_reporte = []
+                    
+                    con3 = mysql.connection.cursor()
+                    con3.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
+                    data3 = con3.fetchall()
+                    con3.close()
+                    #endregion
+
+                    userinfo  = {
+                        "customers": {
+                            "status": True,
+                            "total": totalcus,
+                            "id": idcus,
+                            "name": namecus,
+                            "lastname": lastnamecus,
+                            "email": emailcus,
+                            "profile_image": profile_imagecus,
+                            "client_status": client_statuscus
+                            },
+                            "reports": {
+                                "status": False
+                            }
+                            ,
+                            "username": col[1],
+                            "lastname": col[2],
+                            "profile_image": col[6]
+                        }
         if logged != True:
-            jsonfy = {
-                "status": 499,
-                "msg": "Usuario o contraseña incorrecto",
-                "Logged": False,
-            }
-            return url_for('login')
-        return render_template("/admin/cpAdmin.html", foto_perfil = foto_perfil, usuario=usuarioLogueado, status = json.dumps(jsonfy, ensure_ascii=False))
+            return redirect(url_for('index'))
+        return render_template("/admin/cpAdmin.html", userinfo = json.dumps(userinfo, ensure_ascii=False), status = json.dumps(jsonfy, ensure_ascii=False))
     else:
         return "Not logged"
 
@@ -181,21 +240,45 @@ def cpaCustomers():
                 jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
                 logged = True
                 session["id"] = id
-                userinfo  = {
-                    "username": col[1],
-                    "lastname": col[2],
-                    "profile_image": col[6]
-                }
+                con = mysql.connection.cursor()
+                con2.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
+                data2 = con2.fetchall()
+                con2.close()
+                if len(data2) == 0:
+                    userinfo  = {
+                        "username": col[1],
+                        "lastname": col[2],
+                        "profile_image": col[6],
+                        "customers": {
+                            "status": False,
+                            "id": [],
+                            "name": [],
+                            "lastname": [],
+                            "email": [],
+                            "profile_image": [],
+                            "client_status": []
+                        }
+                    }
+                else:
+                    for cus in data2:
+                        userinfo  = {
+                            "username": col[1],
+                            "lastname": col[2],
+                            "profile_image": col[6],
+                            "customers": {
+                                "status": True,
+                                "id": [].append(cus[0]),
+                                "name": [].append(cus[1]),
+                                "lastname": [].append(cus[2]),
+                                "email": [].append(cus[5]),
+                                "profile_image": [].append(cus[7]),
+                                "client_status": [].append(cus[8])
+                            }
+                        }
                 break
         if logged != True:
-            jsonfy = {
-                "status": 499,
-                "msg": "Usuario o contraseña incorrecto",
-                "Logged": False,
-                }
-            return url_for('login')
-        # return logged
-        return render_template("/admin/cpaCustomers.html", status = json.dumps(jsonfy, ensure_ascii=False), userinfo = json.dumps(userinfo, ensure_ascii=False))    
+            return redirect(url_for('index'))
+        return render_template("/admin/cpAdmin.html", userinfo = json.dumps(userinfo, ensure_ascii=False), status = json.dumps(jsonfy, ensure_ascii=False))
     else:
         return "Not logged"
 

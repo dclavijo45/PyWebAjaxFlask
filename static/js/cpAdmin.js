@@ -1,3 +1,7 @@
+// insert data to view
+document.getElementById("qntCustomersAlcn").innerHTML =
+  userinfo.customers.total;
+
 // chart info
 function randomScalingFactor() {
   return Math.trunc(Math.random() * 5000);

@@ -1,3 +1,5 @@
 En CPAdmin colocar el precio de paga por unidad de producto en un title.
 
 Añadir sección para ver información de clientes por dia.
+
+! sistema de reportes SQL script
