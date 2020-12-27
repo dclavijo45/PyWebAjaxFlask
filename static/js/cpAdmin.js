@@ -1,6 +1,47 @@
 // insert data to view
+
+// clientes box
+let clientesAlcanzados = [];
+for (let i = 0; i <= userinfo.reports.id_customer.length; i++) {
+  //console.log(i);
+  for (let j = 0; j < userinfo.customers.id.length; j++) {
+    if (
+      userinfo.reports.id_customer[i] == userinfo.customers.id[j] &&
+      clientesAlcanzados.includes(userinfo.reports.id_customer[i]) == false
+    ) {
+      clientesAlcanzados.push(userinfo.reports.id_customer[i]);
+    }
+  }
+}
+
 document.getElementById("qntCustomersAlcn").innerHTML =
-  userinfo.customers.total;
+  clientesAlcanzados.length;
+
+document.getElementById("porcentajeCus1Alcn").innerHTML = `restante ${
+  clientesAlcanzados.length
+}/${userinfo.customers.total} - ${(
+  (clientesAlcanzados.length * 100) /
+  userinfo.customers.total
+).toFixed(2)}%`;
+
+// capital total box
+let capitalTotalCus1 = 0;
+for (let i = 0; i < userinfo.reports.precio_producto_vendido.length; i++) {
+  capitalTotalCus1 += userinfo.reports.precio_producto_vendido[i];
+}
+let capitalTotalCus1Format = capitalTotalCus1.toString().split("");
+let count1 = -1;
+let capitalTotalCus1Format2 = [];
+for (let i = capitalTotalCus1Format.length; i >= 0; i--) {
+  if (count1 % 3 == 0 && count1 != 0) {
+    capitalTotalCus1Format2.push(".");
+  }
+  capitalTotalCus1Format2.push(capitalTotalCus1Format[i]);
+  count1++;
+}
+//let cadena = capitalTotalCus1Format2.join("");
+
+document.getElementById("capitalTotalCus1").innerHTML = "";
 
 // chart info
 function randomScalingFactor() {

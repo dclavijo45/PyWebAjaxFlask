@@ -42,6 +42,66 @@ header {
 #sidebar.active {
   margin-left: -17rem;
 }
+#sidebar {
+  overflow-y: scroll;
+  max-height: 552px;
+}
+
+/* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+#sidebar::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+#sidebar::-webkit-scrollbar:vertical {
+  width: 10px;
+}
+
+#sidebar::-webkit-scrollbar-button:increment::-webkit-scrollbar-button {
+  display: none;
+}
+
+#sidebar::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 3px;
+  border: 1px solid #f1f2f3;
+}
+
+#sidebar::-webkit-scrollbar-track {
+  background-color: #6b939f;
+}
+
+/* Estilos2 para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+#content::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+#content::-webkit-scrollbar:vertical {
+  width: 10px;
+}
+
+#content::-webkit-scrollbar-button:increment::-webkit-scrollbar-button {
+  display: none;
+}
+
+#content::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+#content::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 3px;
+  border: 1px solid #f1f2f3;
+}
+
+#content::-webkit-scrollbar-track {
+  background-color: #6b939f;
+}
 
 #content.active {
   width: 100%;

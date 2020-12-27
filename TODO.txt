@@ -2,4 +2,4 @@ En CPAdmin colocar el precio de paga por unidad de producto en un title.
 
 Añadir sección para ver información de clientes por dia.
 
-! sistema de reportes SQL script
+en la recepcion de la fecha en json, revisar los dias 1-9 que estén en formato 0#

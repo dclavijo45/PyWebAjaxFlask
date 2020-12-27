@@ -31,8 +31,9 @@ CREATE TABLE productos(
 
 CREATE TABLE clientes(
 	id int PRIMARY KEY AUTO_INCREMENT,
-    nombres varchar(50) not null,
-    apellidos varchar(55) not null,
+    nombres varchar(20) not null,
+    apellidos varchar(20) not null,
+    alias varchar(15),
     tipo_identificacion char(2) not null,
     num_identificacion varchar(15) not null,
     correo varchar(150) null,
@@ -52,7 +53,7 @@ CREATE TABLE reportes(
     cantidad_venta double not null default 0,
     observacion_venta varchar(100) not null default 'No hay observaciones',
     fecha_creacion datetime not null default now(),
-    fecha_actualizacion datetime null,
+    fecha_actualizacion datetime null default now(),
     foreign key(usuario_reportador) references usuarios(id),
     foreign key(usuario_reportado) references clientes(id),
     foreign key(id_producto) references productos(id)

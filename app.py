@@ -190,33 +190,88 @@ def accessAdmin():
                     #endregion
 
                     # region reportes
-                    cliente_reporte = []
+                    id_reporte = []
+                    clientes_cus = []
+                    nombres_cus = []
+                    apellidos_cus = []
+                    volumen_ventas = []
+                    precio_producto_vendido = []
+                    fecha_reportecus = []
+                    estado_cliente_cus = []
                     
                     con3 = mysql.connection.cursor()
-                    con3.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
+                    con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where ( ( month(r.fecha_actualizacion) = month(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) and (day(r.fecha_actualizacion) >= day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) and day(r.fecha_actualizacion) <= (day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) + 6) ) and year(r.fecha_actualizacion) = year(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY))) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                     data3 = con3.fetchall()
                     con3.close()
                     #endregion
 
-                    userinfo  = {
-                        "customers": {
-                            "status": True,
-                            "total": totalcus,
-                            "id": idcus,
-                            "name": namecus,
-                            "lastname": lastnamecus,
-                            "email": emailcus,
-                            "profile_image": profile_imagecus,
-                            "client_status": client_statuscus
-                            },
-                            "reports": {
-                                "status": False
+                    #region Revisar si existen reportes
+                    if len(data3) != 0:
+                        for colx in data3:
+                            id_reporte.append(colx[0])
+                            clientes_cus.append(colx[1])
+                            nombres_cus.append(colx[4])
+                            apellidos_cus.append(colx[5])
+                            volumen_ventas.append(colx[2])
+                            fecha_reportecus.append(colx[3])
+                            estado_cliente_cus.append(colx[6])
+                            precio_producto_vendido.append(colx[7])
+
+                        userinfo  = {
+                            "customers": {
+                                "status": True,
+                                "total": totalcus,
+                                "id": idcus,
+                                "name": namecus,
+                                "lastname": lastnamecus,
+                                "email": emailcus,
+                                "profile_image": profile_imagecus,
+                                "client_status": client_statuscus
+                                },
+                                "reports": {
+                                    "status": True,
+                                    "id_reporte": id_reporte,
+                                    "id_customer": clientes_cus,
+                                    "name": nombres_cus,
+                                    "lastname":apellidos_cus,
+                                    "volumen": volumen_ventas,
+                                    "precio_producto_vendido": precio_producto_vendido,
+                                    "report_date": fecha_reportecus,
+                                    "customer_status": estado_cliente_cus
+                                },
+                                "username": col[1],
+                                "lastname": col[2],
+                                "profile_image": col[6]
                             }
-                            ,
-                            "username": col[1],
-                            "lastname": col[2],
-                            "profile_image": col[6]
-                        }
+                    else:
+                        userinfo  = {
+                            "customers": {
+                                "status": True,
+                                "total": totalcus,
+                                "id": idcus,
+                                "name": namecus,
+                                "lastname": lastnamecus,
+                                "email": emailcus,
+                                "profile_image": profile_imagecus,
+                                "client_status": client_statuscus
+                                },
+                                "reports": {
+                                    "status": False,
+                                    "id_reporte": [],
+                                    "id_customer": [],
+                                    "name": [],
+                                    "lastname":[],
+                                    "volumen": [],
+                                    "precio_producto_vendido": [],
+                                    "report_date": [],
+                                    "customer_status": []
+                                },
+                                "username": col[1],
+                                "lastname": col[2],
+                                "profile_image": col[6]
+                            }
+                    #endregion
+        
         if logged != True:
             return redirect(url_for('index'))
         return render_template("/admin/cpAdmin.html", userinfo = json.dumps(userinfo, ensure_ascii=False), status = json.dumps(jsonfy, ensure_ascii=False))
@@ -225,62 +280,7 @@ def accessAdmin():
 
 @app.route('/cpacustomers')
 def cpaCustomers():
-    if "id" in session:
-        userinfo = {}
-        sesionActual = session['id']
-        logged = False
-        con = mysql.connection.cursor()
-        con.execute("SELECT * FROM usuarios WHERE id = %s",(sesionActual,))
-        data = con.fetchall()
-        con.close()
-        jsonfy = {}
-        for col in data:
-            id = col[0]
-            if id == sesionActual:
-                jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
-                logged = True
-                session["id"] = id
-                con = mysql.connection.cursor()
-                con2.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
-                data2 = con2.fetchall()
-                con2.close()
-                if len(data2) == 0:
-                    userinfo  = {
-                        "username": col[1],
-                        "lastname": col[2],
-                        "profile_image": col[6],
-                        "customers": {
-                            "status": False,
-                            "id": [],
-                            "name": [],
-                            "lastname": [],
-                            "email": [],
-                            "profile_image": [],
-                            "client_status": []
-                        }
-                    }
-                else:
-                    for cus in data2:
-                        userinfo  = {
-                            "username": col[1],
-                            "lastname": col[2],
-                            "profile_image": col[6],
-                            "customers": {
-                                "status": True,
-                                "id": [].append(cus[0]),
-                                "name": [].append(cus[1]),
-                                "lastname": [].append(cus[2]),
-                                "email": [].append(cus[5]),
-                                "profile_image": [].append(cus[7]),
-                                "client_status": [].append(cus[8])
-                            }
-                        }
-                break
-        if logged != True:
-            return redirect(url_for('index'))
-        return render_template("/admin/cpAdmin.html", userinfo = json.dumps(userinfo, ensure_ascii=False), status = json.dumps(jsonfy, ensure_ascii=False))
-    else:
-        return "Not logged"
+    return "Building..."
 
 @app.route("/logout")
 def logoutUser():
