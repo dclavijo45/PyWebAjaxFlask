@@ -108,6 +108,40 @@ header {
   margin: 0;
 }
 
+/* Estilos2 para motores Webkit y blink (Chrome, Safari, Opera... )*/
+#ListUsersAdmin {
+  overflow-y: scroll;
+  max-height: 125px;
+  display: block;
+  position: relative;
+}
+
+#ListUsersAdmin::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+#ListUsersAdmin::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+#ListUsersAdmin::-webkit-scrollbar-button:increment::-webkit-scrollbar-button {
+  display: none;
+}
+
+#ListUsersAdmin::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+#ListUsersAdmin::-webkit-scrollbar-thumb {
+  background-color: #8a7d7d;
+  border-radius: 3px;
+  border: 1px solid #f1f2f3;
+}
+
+#ListUsersAdmin::-webkit-scrollbar-track {
+  background-color: #90989b;
+}
+
 @media (max-width: 768px) {
   #sidebar {
     margin-left: -17rem;

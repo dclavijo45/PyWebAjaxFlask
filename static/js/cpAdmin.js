@@ -39,9 +39,48 @@ for (let i = capitalTotalCus1Format.length; i >= 0; i--) {
   capitalTotalCus1Format2.push(capitalTotalCus1Format[i]);
   count1++;
 }
-//let cadena = capitalTotalCus1Format2.join("");
 
-document.getElementById("capitalTotalCus1").innerHTML = "";
+let capitalTotalCus1Format3 = capitalTotalCus1Format2.join("");
+let capitalTotalCus1Format4 = "";
+
+for (var i = capitalTotalCus1Format3.length - 1; i >= 0; i--) {
+  capitalTotalCus1Format4 += capitalTotalCus1Format3[i];
+}
+
+document.getElementById(
+  "capitalTotalCus1"
+).innerHTML = `$${capitalTotalCus1Format4}`;
+
+// volumen box
+let volumenProductoTotalCus1 = 0;
+for (let i = 0; i < userinfo.reports.volumen.length; i++) {
+  volumenProductoTotalCus1 += userinfo.reports.volumen[i];
+}
+document.getElementById(
+  "volumenProductoTotalCus1"
+).innerHTML = volumenProductoTotalCus1;
+
+// List users tab
+let ListUsersAdmin = "";
+for (let i = 0; i < userinfo.reports.id_reporte.length; i++) {
+  ListUsersAdmin += `
+    <div class="d-block">
+            <h6 class="text-center" style="display: inline-block;width:24%">${userinfo.reports.name[i]}</h6>
+            <!--Perfomance: 11 Char-->
+            <h6 class="text-muted text-center" style="display: inline-block;width:24%">Martes/12/22</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%">${userinfo.reports.volumen[i]}</h6>
+            <h6 class="text-center" style="display: inline-block;">${userinfo.reports.precio_producto_vendido[i]}</h6>
+            <h6 class="text-center" style="display: block;float: right;">
+                <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+                <i class="far fa-trash-alt text-danger optionsBarUserAdmin" title="Borrar registro"
+                    style="font-size: 16px;cursor:pointer"></i>
+            </h6>
+        </div>
+        <hr>
+    `;
+}
+document.getElementById("ListUsersAdmin").innerHTML = ListUsersAdmin;
 
 // chart info
 function randomScalingFactor() {
