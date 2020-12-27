@@ -82,10 +82,37 @@ for (let i = 0; i < userinfo.reports.id_reporte.length; i++) {
 }
 document.getElementById("ListUsersAdmin").innerHTML = ListUsersAdmin;
 
-// chart info
-function randomScalingFactor() {
-  return Math.trunc(Math.random() * 5000);
+// chart all
+
+// current week data
+let datosSemanaActual = [0, 0, 0, 0, 0, 0, 0];
+
+for (let i = 0; i < userinfo.reports.report_date.length; i++) {
+  if (userinfo.reports.report_date[i].slice(0, 3) == "Mon") {
+    datosSemanaActual[0] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Tue") {
+    datosSemanaActual[1] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Wed") {
+    datosSemanaActual[2] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Thu") {
+    datosSemanaActual[3] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Fri") {
+    datosSemanaActual[4] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Sat") {
+    datosSemanaActual[5] += userinfo.reports.volumen[i];
+  } else if (userinfo.reports.report_date[i].slice(0, 3) == "Sun") {
+    datosSemanaActual[6] += userinfo.reports.volumen[i];
+  } else {
+    console.error(
+      `Has ocurred a error, received: ${userinfo.reports.report_date[i].slice(
+        0,
+        3
+      )}`
+    );
+  }
 }
+
+// chart config
 let chartColors = {
   red: "rgb(255, 99, 132)",
   orange: "rgb(255, 159, 64)",
@@ -112,29 +139,13 @@ let config = {
         label: "Semana pasada",
         borderColor: chartColors.orange,
         backgroundColor: chartColors.yellow,
-        data: [
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-        ],
+        data: [1, 2, 3, 4, 5, 6, 7],
       },
       {
         label: "Semana actual",
         borderColor: chartColors.purple,
         backgroundColor: chartColors.blue,
-        data: [
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-          randomScalingFactor(),
-        ],
+        data: datosSemanaActual,
       },
     ],
   },

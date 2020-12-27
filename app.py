@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, session, url_for, json, redirect
-
+from datetime import *
 # from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 from flask_mysqldb import MySQL
@@ -198,9 +198,9 @@ def accessAdmin():
                     precio_producto_vendido = []
                     fecha_reportecus = []
                     estado_cliente_cus = []
-                    
+
                     con3 = mysql.connection.cursor()
-                    con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where ( ( month(r.fecha_actualizacion) = month(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) and (day(r.fecha_actualizacion) >= day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) and day(r.fecha_actualizacion) <= (day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) + 6) ) and year(r.fecha_actualizacion) = year(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY))) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                    con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (r.fecha_actualizacion >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and r.fecha_actualizacion <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                     data3 = con3.fetchall()
                     con3.close()
                     #endregion
