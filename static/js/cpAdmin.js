@@ -8,6 +8,7 @@ let ListUsersAdmin = "";
 let diaRegistradoListUACus = "";
 let datosSemanaActual = [0, 0, 0, 0, 0, 0, 0];
 let datosSemanaPasada = [0, 0, 0, 0, 0, 0, 0];
+let selectorOpcionesCustomers = "";
 
 // chart config
 let chartColors = {
@@ -341,6 +342,24 @@ function loadLastWeekData() {
   myLine.update();
 }
 
+// set options on add register customers
+function loadOptionsSelectorCus() {
+  selectorOpcionesCustomers = `<option selected hidden value="">Seleccionar</option>`;
+  try {
+    for (let i = 0; i < userinfo.customers.name.length; i++) {
+      selectorOpcionesCustomers += `
+        <option value="${userinfo.customers.id[i]}">${userinfo.customers.name[i]}</option>
+        `;
+    }
+  } catch (e) {
+    console.log("Customers not found");
+  }
+
+  document.getElementById(
+    "selectorOpcionesCustomers"
+  ).innerHTML = selectorOpcionesCustomers;
+}
+
 // run functions for add data
 loadClientesBox();
 loadTotalCapitalBox();
@@ -348,6 +367,7 @@ loadVolumenBox();
 loadListUsersAdminCus();
 loadCurrentWeekData();
 loadLastWeekData();
+loadOptionsSelectorCus();
 
 // set config to add reg
 $("#btnAddReg").click(function (e) {
@@ -367,7 +387,8 @@ $("#btnAddReg").click(function (e) {
 // set date now cpAdmin input date and table L-Ucus info
 let dateNow = new Date();
 let field = document.querySelector("#datenow");
-const fechaDeHoy = document.querySelector("#fechaDeHoy");
+let fechaDeHoy = document.querySelector("#fechaDeHoy");
+
 field.value =
   dateNow.getFullYear().toString() +
   "-" +

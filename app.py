@@ -134,6 +134,9 @@ def register():
 @app.route("/cpadmin")
 def accessAdmin():
     if "id" in session:
+        statusJsonCustomers = True
+        statusJsonReportCW = True
+        statusJsonReportLW = True
         sesionActual = session['id']
         logged = False
         con = mysql.connection.cursor()
@@ -152,247 +155,137 @@ def accessAdmin():
                 data2 = con2.fetchall()
                 con2.close()
                 if len(data2) == 0:
-                    userinfo  = {
-                        "username": col[1],
-                        "lastname": col[2],
-                        "profile_image": col[6],
-                        "customers": {
-                            "status": False,
-                            "id": [],
-                            "total": 0,
-                            "name": [],
-                            "lastname": [],
-                            "alias": [],
-                            "email": [],
-                            "profile_image": [],
-                            "client_status": []
-                        },
-                        "reports": {
-                            "status": False
-                        }
-                    }
-                else:
-                    # region clientes
-                    idcus = []
-                    namecus = []
-                    lastnamecus = []
-                    aliascus = []
-                    emailcus = []
-                    profile_imagecus = []
-                    client_statuscus = []
-                    totalcus = 0
-                    for cus in data2:
-                        idcus.append(cus[0])
-                        namecus.append(cus[1])
-                        lastnamecus.append(cus[2])
-                        aliascus.append(cus[3])
-                        emailcus.append(cus[6])
-                        profile_imagecus.append(cus[7])
-                        client_statuscus.append(cus[10])
-                        totalcus+= 1 
+                   statusJsonCustomers = False
+
+                # region clientes
+                idcus = []
+                namecus = []
+                lastnamecus = []
+                aliascus = []
+                emailcus = []
+                profile_imagecus = []
+                client_statuscus = []
+                totalcus = 0
+
+                for cus in data2:
+                    idcus.append(cus[0])
+                    namecus.append(cus[1])
+                    lastnamecus.append(cus[2])
+                    aliascus.append(cus[3])
+                    emailcus.append(cus[6])
+                    profile_imagecus.append(cus[7])
+                    client_statuscus.append(cus[10])
+                    totalcus+= 1 
+                #endregion
+
+                # region reportes semana actual
+                id_reporte = []
+                clientes_cus = []
+                nombres_cus = []
+                apellidos_cus = []
+                volumen_ventas = []
+                precio_producto_vendido = []
+                fecha_reportecus = []
+                estado_cliente_cus = []
+
+                con3 = mysql.connection.cursor()
+                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                data3 = con3.fetchall()
+                con3.close()
+                #endregion
+
+                #region Revisar si existen reportes SM-AC
+                if len(data3) == 0:
+                    statusJsonReportCW = False
+
+                for colx in data3:
+                    id_reporte.append(colx[0])
+                    clientes_cus.append(colx[1])
+                    nombres_cus.append(colx[4])
+                    apellidos_cus.append(colx[5])
+                    volumen_ventas.append(colx[2])
+                    fecha_reportecus.append(colx[3])
+                    estado_cliente_cus.append(colx[6])
+                    precio_producto_vendido.append(colx[7])
                     #endregion
 
-                    # region reportes semana actual
-                    id_reporte = []
-                    clientes_cus = []
-                    nombres_cus = []
-                    apellidos_cus = []
-                    volumen_ventas = []
-                    precio_producto_vendido = []
-                    fecha_reportecus = []
-                    estado_cliente_cus = []
+                #region reportes semana pasada
+                id_reporteSmpa = []
+                clientes_cusSmpa = []
+                nombres_cusSmpa = []
+                apellidos_cusSmpa = []
+                volumen_ventasSmpa = []
+                precio_producto_vendidoSmpa = []
+                fecha_reportecusSmpa = []
+                estado_cliente_cusSmpa = []
 
-                    con3 = mysql.connection.cursor()
-                    con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
-                    data3 = con3.fetchall()
-                    con3.close()
-                    #endregion
+                con4 = mysql.connection.cursor()
+                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                data4 = con4.fetchall()
+                con4.close()
+                #endregion
 
-                    #region Revisar si existen reportes SM-AC
-                    if len(data3) != 0:
-                        for colx in data3:
-                            id_reporte.append(colx[0])
-                            clientes_cus.append(colx[1])
-                            nombres_cus.append(colx[4])
-                            apellidos_cus.append(colx[5])
-                            volumen_ventas.append(colx[2])
-                            fecha_reportecus.append(colx[3])
-                            estado_cliente_cus.append(colx[6])
-                            precio_producto_vendido.append(colx[7])
-
-                        userinfo  = {
-                            "customers": {
-                                "status": True,
-                                "total": totalcus,
-                                "id": idcus,
-                                "name": namecus,
-                                "lastname": lastnamecus,
-                                "alias": aliascus,
-                                "email": emailcus,
-                                "profile_image": profile_imagecus,
-                                "client_status": client_statuscus
-                                },
-                                "reports": {
-                                    "status": True,
-                                    "id_reporte": id_reporte,
-                                    "id_customer": clientes_cus,
-                                    "name": nombres_cus,
-                                    "lastname":apellidos_cus,
-                                    "volumen": volumen_ventas,
-                                    "precio_producto_vendido": precio_producto_vendido,
-                                    "report_date": fecha_reportecus,
-                                    "customer_status": estado_cliente_cus
-                                },
-                                "username": col[1],
-                                "lastname": col[2],
-                                "profile_image": col[6]
-                            }
-                    else:
-                        userinfo  = {
-                            "customers": {
-                                "status": True,
-                                "total": totalcus,
-                                "id": idcus,
-                                "name": namecus,
-                                "lastname": lastnamecus,
-                                "alias": aliascus,
-                                "email": emailcus,
-                                "profile_image": profile_imagecus,
-                                "client_status": client_statuscus
-                                },
-                                "reports": {
-                                    "status": False,
-                                    "id_reporte": [],
-                                    "id_customer": [],
-                                    "name": [],
-                                    "lastname":[],
-                                    "volumen": [],
-                                    "precio_producto_vendido": [],
-                                    "report_date": [],
-                                    "customer_status": []
-                                },
-                                "username": col[1],
-                                "lastname": col[2],
-                                "profile_image": col[6]
-                            }
-                    #endregion
-
-                    #region reportes semana pasada
-                    id_reporteSmpa = []
-                    clientes_cusSmpa = []
-                    nombres_cusSmpa = []
-                    apellidos_cusSmpa = []
-                    volumen_ventasSmpa = []
-                    precio_producto_vendidoSmpa = []
-                    fecha_reportecusSmpa = []
-                    estado_cliente_cusSmpa = []
-
-                    con4 = mysql.connection.cursor()
-                    con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
-                    data4 = con4.fetchall()
-                    con4.close()
-                    #endregion
-
-                    #region Revisar si existen reportes SM-PA
-                    if len(data4) != 0:
-                        for colx in data4:
-                            id_reporteSmpa.append(colx[0])
-                            clientes_cusSmpa.append(colx[1])
-                            nombres_cusSmpa.append(colx[4])
-                            apellidos_cusSmpa.append(colx[5])
-                            volumen_ventasSmpa.append(colx[2])
-                            fecha_reportecusSmpa.append(colx[3])
-                            estado_cliente_cusSmpa.append(colx[6])
-                            precio_producto_vendidoSmpa.append(colx[7])
-
-                        userinfo  = {
-                            "customers": {
-                                "status": True,
-                                "total": totalcus,
-                                "id": idcus,
-                                "name": namecus,
-                                "lastname": lastnamecus,
-                                "alias": aliascus,
-                                "email": emailcus,
-                                "profile_image": profile_imagecus,
-                                "client_status": client_statuscus
-                                },
-                                "reports": {
-                                    "current_week":{
-                                        "status": True,
-                                        "id_reporte": id_reporte,
-                                        "id_customer": clientes_cus,
-                                        "name": nombres_cus,
-                                        "lastname":apellidos_cus,
-                                        "volumen": volumen_ventas,
-                                        "precio_producto_vendido": precio_producto_vendido,
-                                        "report_date": fecha_reportecus,
-                                        "customer_status": estado_cliente_cus
-                                    },
-                                    "last_week": {
-                                        "status": True,
-                                        "id_reporte": id_reporteSmpa,
-                                        "id_customer": clientes_cusSmpa,
-                                        "name": nombres_cusSmpa,
-                                        "lastname":apellidos_cusSmpa,
-                                        "volumen": volumen_ventasSmpa,
-                                        "precio_producto_vendido": precio_producto_vendidoSmpa,
-                                        "report_date": fecha_reportecusSmpa,
-                                        "customer_status": estado_cliente_cusSmpa
+                #region Revisar si existen reportes SM-PA
+                if len(data4) == 0:
+                    statusJsonReportLW = False
+                
+                for colx in data4:
+                    id_reporteSmpa.append(colx[0])
+                    clientes_cusSmpa.append(colx[1])
+                    nombres_cusSmpa.append(colx[4])
+                    apellidos_cusSmpa.append(colx[5])
+                    volumen_ventasSmpa.append(colx[2])
+                    fecha_reportecusSmpa.append(colx[3])
+                    estado_cliente_cusSmpa.append(colx[6])
+                    precio_producto_vendidoSmpa.append(colx[7])
+                #endregion
+            
+                userinfo  = {
+                                    "customers": {
+                                        "status": statusJsonCustomers,
+                                        "total": totalcus,
+                                        "id": idcus,
+                                        "name": namecus,
+                                        "lastname": lastnamecus,
+                                        "alias": aliascus,
+                                        "email": emailcus,
+                                        "profile_image": profile_imagecus,
+                                        "client_status": client_statuscus
+                                        },
+                                        "reports": {
+                                            "current_week":{
+                                                "status": statusJsonReportCW,
+                                                "id_reporte": id_reporte,
+                                                "id_customer": clientes_cus,
+                                                "name": nombres_cus,
+                                                "lastname":apellidos_cus,
+                                                "volumen": volumen_ventas,
+                                                "precio_producto_vendido": precio_producto_vendido,
+                                                "report_date": fecha_reportecus,
+                                                "customer_status": estado_cliente_cus
+                                            },
+                                            "last_week": {
+                                                "status": statusJsonReportLW,
+                                                "id_reporte": id_reporteSmpa,
+                                                "id_customer": clientes_cusSmpa,
+                                                "name": nombres_cusSmpa,
+                                                "lastname":apellidos_cusSmpa,
+                                                "volumen": volumen_ventasSmpa,
+                                                "precio_producto_vendido": precio_producto_vendidoSmpa,
+                                                "report_date": fecha_reportecusSmpa,
+                                                "customer_status": estado_cliente_cusSmpa
+                                            }
+                                        },
+                                        "username": col[1],
+                                        "lastname": col[2],
+                                        "profile_image": col[6]
                                     }
-                                },
-                                "username": col[1],
-                                "lastname": col[2],
-                                "profile_image": col[6]
-                            }
-                    else:
-                        userinfo  = {
-                            "customers": {
-                                "status": True,
-                                "total": totalcus,
-                                "id": idcus,
-                                "name": namecus,
-                                "lastname": lastnamecus,
-                                "alias": aliascus,
-                                "email": emailcus,
-                                "profile_image": profile_imagecus,
-                                "client_status": client_statuscus
-                                },
-                                "reports": {
-                                    "current_week":{
-                                        "status": True,
-                                        "id_reporte": id_reporte,
-                                        "id_customer": clientes_cus,
-                                        "name": nombres_cus,
-                                        "lastname":apellidos_cus,
-                                        "volumen": volumen_ventas,
-                                        "precio_producto_vendido": precio_producto_vendido,
-                                        "report_date": fecha_reportecus,
-                                        "customer_status": estado_cliente_cus
-                                    },
-                                    "last_week": {
-                                        "status": False,
-                                        "id_reporte": id_reporteSmpa,
-                                        "id_customer": clientes_cusSmpa,
-                                        "name": nombres_cusSmpa,
-                                        "lastname":apellidos_cusSmpa,
-                                        "volumen": volumen_ventasSmpa,
-                                        "precio_producto_vendido": precio_producto_vendidoSmpa,
-                                        "report_date": fecha_reportecusSmpa,
-                                        "customer_status": estado_cliente_cusSmpa
-                                    }
-                                },
-                                "username": col[1],
-                                "lastname": col[2],
-                                "profile_image": col[6]
-                            }
-                    #endregion
-
         if logged != True:
             return redirect(url_for('index'))
+        
         return render_template("/admin/cpAdmin.html", userinfo = json.dumps(userinfo, ensure_ascii=False), status = json.dumps(jsonfy, ensure_ascii=False))
     else:
-        return "Not logged"
+        return redirect(url_for('index'))
 
 @app.route('/cpacustomers')
 def cpaCustomers():
@@ -406,4 +299,4 @@ def logoutUser():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='localhost', port=80)
+    app.run(debug=True, port=80)
