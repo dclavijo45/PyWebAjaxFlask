@@ -26,8 +26,12 @@
 <body>
     <!--TEMP CODE-->
     <script>
-        let userinfo = {{ userinfo | tojson}}; userinfo = JSON.parse(userinfo);
+        let userinfo = {{ userinfo | tojson}};
+        let statusres = {{ status | tojson}};
+        userinfo = JSON.parse(userinfo);
+        statusres = JSON.parse(statusres);
         console.log(userinfo);
+        console.log(statusres);
     </script>
     <header>
         <!--Horizontal navbar-->
