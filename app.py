@@ -162,6 +162,7 @@ def accessAdmin():
                             "total": 0,
                             "name": [],
                             "lastname": [],
+                            "alias": [],
                             "email": [],
                             "profile_image": [],
                             "client_status": []
@@ -175,6 +176,7 @@ def accessAdmin():
                     idcus = []
                     namecus = []
                     lastnamecus = []
+                    aliascus = []
                     emailcus = []
                     profile_imagecus = []
                     client_statuscus = []
@@ -183,9 +185,10 @@ def accessAdmin():
                         idcus.append(cus[0])
                         namecus.append(cus[1])
                         lastnamecus.append(cus[2])
-                        emailcus.append(cus[5])
-                        profile_imagecus.append(cus[6])
-                        client_statuscus.append(cus[8])
+                        aliascus.append(cus[3])
+                        emailcus.append(cus[6])
+                        profile_imagecus.append(cus[7])
+                        client_statuscus.append(cus[10])
                         totalcus+= 1 
                     #endregion
 
@@ -224,6 +227,7 @@ def accessAdmin():
                                 "id": idcus,
                                 "name": namecus,
                                 "lastname": lastnamecus,
+                                "alias": aliascus,
                                 "email": emailcus,
                                 "profile_image": profile_imagecus,
                                 "client_status": client_statuscus
@@ -251,6 +255,7 @@ def accessAdmin():
                                 "id": idcus,
                                 "name": namecus,
                                 "lastname": lastnamecus,
+                                "alias": aliascus,
                                 "email": emailcus,
                                 "profile_image": profile_imagecus,
                                 "client_status": client_statuscus
@@ -307,6 +312,7 @@ def accessAdmin():
                                 "id": idcus,
                                 "name": namecus,
                                 "lastname": lastnamecus,
+                                "alias": aliascus,
                                 "email": emailcus,
                                 "profile_image": profile_imagecus,
                                 "client_status": client_statuscus
@@ -347,6 +353,7 @@ def accessAdmin():
                                 "id": idcus,
                                 "name": namecus,
                                 "lastname": lastnamecus,
+                                "alias": aliascus,
                                 "email": emailcus,
                                 "profile_image": profile_imagecus,
                                 "client_status": client_statuscus

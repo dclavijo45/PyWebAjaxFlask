@@ -58,13 +58,3 @@ CREATE TABLE reportes(
     foreign key(usuario_reportado) references clientes(id),
     foreign key(id_producto) references productos(id)
 );
-
-/*
-SELECT * from reportes 
-where ( ( month(fecha_actualizacion) = month(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY))
- and
- (day(fecha_actualizacion) >= day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) and 
- day(fecha_actualizacion) <= (day(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY)) + 6) )  
- and
- year(fecha_actualizacion) = year(DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY))) ) and usuario_reportador = 1;
-*/

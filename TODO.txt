@@ -1,5 +1,0 @@
-En CPAdmin colocar el precio de paga por unidad de producto en un title.
-
-Añadir sección para ver información de clientes por dia.
-
-en la recepcion de la fecha en json, revisar los dias 1-9 que estén en formato 0#

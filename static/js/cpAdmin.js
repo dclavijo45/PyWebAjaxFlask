@@ -87,15 +87,62 @@ try {
 
 // List users tab
 let ListUsersAdmin = "";
+let diaRegistradoListUACus = "";
 try {
   for (let i = 0; i < userinfo.reports.current_week.id_reporte.length; i++) {
+
+    if (userinfo.reports.current_week.report_date[i].slice(0, 3) == "Mon") {
+        diaRegistradoListUACus = "Lunes";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Tue"
+    ) {
+      diaRegistradoListUACus = "Martes";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Wed"
+    ) {
+      diaRegistradoListUACus = "Miercoles";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Thu"
+    ) {
+      diaRegistradoListUACus = "Jueves";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Fri"
+    ) {
+      diaRegistradoListUACus = "Viernes";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Sat"
+    ) {
+      diaRegistradoListUACus = "Sabado";
+    } else if (
+      userinfo.reports.current_week.report_date[i].slice(0, 3) == "Sun"
+    ) {
+      diaRegistradoListUACus = "Domingo";
+    } else {
+      console.error(
+        `Has ocurred a error, received: ${userinfo.reports.current_week.report_date[
+          i
+        ].slice(0, 3)}`
+      );
+    }
+
     ListUsersAdmin += `
     <div class="d-block">
-            <h6 class="text-center" style="display: inline-block;width:24%">${userinfo.reports.current_week.name[i]}</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%">${
+              userinfo.reports.current_week.name[i]
+            }</h6>
             <!--Perfomance: 11 Char-->
-            <h6 class="text-muted text-center" style="display: inline-block;width:24%">Martes/12/22</h6>
-            <h6 class="text-center" style="display: inline-block;width:24%">${userinfo.reports.current_week.volumen[i]}</h6>
-            <h6 class="text-center" style="display: inline-block;">${userinfo.reports.current_week.precio_producto_vendido[i]}</h6>
+            <h6 class="text-muted text-center" style="display: inline-block;width:24%">${diaRegistradoListUACus}/${userinfo.reports.current_week.report_date[
+      i
+    ].slice(5, 7)}/${userinfo.reports.current_week.report_date[i].slice(
+      14,
+      16
+    )}</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%">${
+              userinfo.reports.current_week.volumen[i]
+            }</h6>
+            <h6 class="text-center" style="display: inline-block;">${
+              userinfo.reports.current_week.precio_producto_vendido[i]
+            }</h6>
             <h6 class="text-center" style="display: block;float: right;">
                 <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro"
                     style="font-size: 16px;cursor:pointer"></i>
@@ -110,7 +157,7 @@ try {
 } catch (e) {
   document.getElementById(
     "ListUsersAdmin"
-  ).innerHTML = `<h4 class="text-center text-dark d-block">No hay reportes</h4>`;
+  ).innerHTML = `<h4 class="text-center text-dark d-block">No hay clientes</h4>`;
 }
 
 // chart all
@@ -278,15 +325,21 @@ $("#btnAddReg").click(function (e) {
   }
 });
 
-// set date now cpAdmin input date
+// set date now cpAdmin input date and table L-Ucus info
 let dateNow = new Date();
 let field = document.querySelector("#datenow");
+const fechaDeHoy = document.querySelector("#fechaDeHoy");
 field.value =
   dateNow.getFullYear().toString() +
   "-" +
   (dateNow.getMonth() + 1).toString().padStart(2, 0) +
   "-" +
   dateNow.getDate().toString().padStart(2, 0);
+fechaDeHoy.innerHTML = `
+${dateNow.getDate().toString().padStart(2, 0)}/${(dateNow.getMonth() + 1)
+  .toString()
+  .padStart(2, 0)}/${dateNow.getFullYear().toString()}
+`;
 
 // setup input price product as not change
 $("#InputPricecpa").change(function (e) {
