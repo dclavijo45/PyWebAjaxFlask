@@ -76,17 +76,20 @@
     <span id="ListUsersAdmin"></span>
     <!--System add register-->
     <span class="form-group" id="BoxAddReg" style="display: none;">
-        <form action="/cpaddreg" method="POST">
-            <select id="selectorOpcionesCustomers" class="form-control d-inline-block text-center" style="width: 24%;" name="" id="" required>
+        <form action="/cpaddreg" method="PUT">
+            <select id="selectorOpcionesCustomers" class="form-control d-inline-block text-center" style="width: 24%;"
+                name="IARid" required>
             </select>
-            <input class="form-control d-inline-block" style="width: 24%;" type="date" id="datenow" required>
-            <input class="form-control d-inline-block text-center" type="number" style="width: 23%" name="" id=""
-                placeholder="Cantidad" value="1" autofocus required>
-            <input class="form-control d-inline-block text-center" type="number" style="width: 16.4%" name=""
-                id="InputPricecpa" value="2400">
-            <i id="btnSaveRegistercpa" class="fas fa-times text-danger mx-auto" style="margin-left: 2px;cursor:pointer"
-                title="No guardar"></i>
-            <i class="fas fa-check text-success" style="margin-left: 2px;cursor:pointer" title="Guardar"></i>
+            <input class="form-control d-inline-block" style="width: 24%;" type="date" id="datenow" name="IARdate"
+                id="IARdate" required>
+            <input class="form-control d-inline-block text-center" type="number" style="width: 23%" name="IARquantity"
+                id="IARquantity" placeholder="Cantidad" value="0" autofocus required>
+            <input class="form-control d-inline-block text-center" type="number" style="width: 16.4%" id="InputPricecpa"
+                value="0">
+            <i id="btnNotSaveRegistercpa" class="fas fa-times text-danger mx-auto"
+                style="margin-left: 2px;cursor:pointer" title="No guardar"></i>
+            <i id="btnSaveRegistercpa" class="fas fa-check text-success" style="margin-left: 2px;cursor:pointer"
+                title="Guardar"></i>
             <!--Toma el valor de acuerdo a la seleccion en el select-->
         </form>
     </span>

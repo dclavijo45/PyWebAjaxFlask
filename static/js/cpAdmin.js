@@ -122,9 +122,10 @@ function loadClientesBox() {
   } else {
     document.getElementById("porcentajeCus1Alcn").innerHTML = `restante ${
       clientesAlcanzados.length
-    }/${userinfo.customers.total} - ${
-      (clientesAlcanzados.length * 100) / userinfo.customers.total.toFixed(2)
-    }%`;
+    }/${userinfo.customers.total} - ${(
+      (clientesAlcanzados.length * 100) /
+      userinfo.customers.total
+    ).toFixed(2)}%`;
   }
 }
 
@@ -369,6 +370,27 @@ loadCurrentWeekData();
 loadLastWeekData();
 loadOptionsSelectorCus();
 
+function runAllBeforeUpdate(infoNew) {
+  clientesAlcanzados = [];
+  capitalTotalCus1 = 0;
+  volumenProductoTotalCus1 = 0;
+  ListUsersAdmin = "";
+  diaRegistradoListUACus = "";
+  datosSemanaActual = [0, 0, 0, 0, 0, 0, 0];
+  datosSemanaPasada = [0, 0, 0, 0, 0, 0, 0];
+  selectorOpcionesCustomers = "";
+  loadClientesBox();
+  loadTotalCapitalBox();
+  loadVolumenBox();
+  loadListUsersAdminCus();
+  loadCurrentWeekData();
+  loadLastWeekData();
+  loadOptionsSelectorCus();
+  config.data.datasets[0].data = datosSemanaActual;
+  config.data.datasets[1].data = datosSemanaPasada;
+  myLine.update();
+}
+
 // set config to add reg
 $("#btnAddReg").click(function (e) {
   if ($("#ListUsersAdmin").is(":visible")) {
@@ -408,9 +430,12 @@ $("#InputPricecpa").change(function (e) {
 $("#InputPricecpa").keydown(function (e) {
   e.preventDefault();
 });
+$("#InputPricecpa").click(function (e) {
+  e.preventDefault();
+});
 
 //set btn to events add register
-$("#btnSaveRegistercpa").click(function (e) {
+$("#btnNotSaveRegistercpa").click(function (e) {
   if ($("#ListUsersAdmin").is(":visible")) {
     $("#ListUsersAdmin").hide();
     $("#BoxAddReg").show();
@@ -422,4 +447,66 @@ $("#btnSaveRegistercpa").click(function (e) {
     $("#ListUsersAdmin").show();
     $("#BoxAddReg").hide();
   }
+});
+
+// set price in event to change of customer
+$("#selectorOpcionesCustomers").change(function (e) {
+  $("#InputPricecpa").attr(
+    "value",
+    userinfo.customers.precio_pago_prod[
+      document.getElementById("selectorOpcionesCustomers").selectedIndex - 1
+    ]
+  );
+});
+
+// ADD REGISTER EVENT !
+
+$("#btnSaveRegistercpa").click(() => {
+  if (
+    $("#selectorOpcionesCustomers").val() == 0 ||
+    $("#IARquantity").val() == 0
+  ) {
+    alert("Llena las opciones!");
+    return false;
+  }
+  let action = $("#BoxAddReg form").attr("action");
+  let method = $("#BoxAddReg form").attr("method");
+  $.ajax({
+    beforeSend: function (xhr, settings) {
+      // if (
+      //   !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+      //   !this.crossDomain
+      // ) {
+      //   xhr.setRequestHeader("X-CSRFToken", csrf_token);
+      // }
+      console.clear();
+      console.log("Consultado...");
+    },
+    url: action,
+    type: method,
+    data: JSON.stringify(
+      $("#BoxAddReg form")
+        .serializeArray()
+        .reduce(function (a, z) {
+          a[z.name] = z.value;
+          return a;
+        }, {})
+    ),
+    dataType: "json",
+    success: function (info) {
+      userinfo = info;
+      runAllBeforeUpdate();
+    },
+    error: function (jqXHR, status, error) {
+      alert(
+        "Datos no guardados, por favor informe a la administración el problema"
+      );
+      console.log(`Estado: ${status}`);
+      console.log(`Error: ${error}`);
+    },
+    complete: function (jqXHR, status) {
+      console.log(`Petición completada con estado: ${status}`);
+    },
+    timeout: 10000,
+  });
 });

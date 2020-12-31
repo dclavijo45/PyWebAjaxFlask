@@ -24,8 +24,8 @@ CREATE TABLE productos(
     cantidad_producto varchar(100) not null default 0,
     observaciones_producto varchar(150) not null default 'No hay observaciones',
     creador_producto int not null,
-    fecha_creacion datetime not null default now(),
-    fecha_actualizacion datetime null default now(),
+    fecha_creacion datetime not null default date(now()),
+    fecha_actualizacion datetime null default date(now()),
     foreign key(creador_producto) references usuarios(id)
 );
 
@@ -52,8 +52,9 @@ CREATE TABLE reportes(
     id_producto int not null,
     cantidad_venta double not null default 0,
     observacion_venta varchar(100) not null default 'No hay observaciones',
-    fecha_creacion datetime not null default now(),
-    fecha_actualizacion datetime null default now(),
+    fecha_creacion datetime not null default date(now()),
+    fecha_actualizacion datetime null default date(now()),
+    estado_reporte tinyint(1) not null default 1,
     foreign key(usuario_reportador) references usuarios(id),
     foreign key(usuario_reportado) references clientes(id),
     foreign key(id_producto) references productos(id)

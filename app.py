@@ -151,7 +151,7 @@ def accessAdmin():
                 logged = True
                 session["id"] = id
                 con2 = mysql.connection.cursor()
-                con2.execute("SELECT * FROM clientes WHERE creador_cliente = %s",(sesionActual,))
+                con2.execute("select c.id, c.nombres, c.apellidos, c.alias, c.correo, c.foto_perfil, c.producto_asociado,c.estado_cliente, p.precio_producto from clientes c, productos p where creador_cliente = %s and c.producto_asociado = p.id",(sesionActual,))
                 data2 = con2.fetchall()
                 con2.close()
                 if len(data2) == 0:
@@ -165,6 +165,7 @@ def accessAdmin():
                 emailcus = []
                 profile_imagecus = []
                 client_statuscus = []
+                precio_pago_prodcus = []
                 totalcus = 0
 
                 for cus in data2:
@@ -172,9 +173,10 @@ def accessAdmin():
                     namecus.append(cus[1])
                     lastnamecus.append(cus[2])
                     aliascus.append(cus[3])
-                    emailcus.append(cus[6])
-                    profile_imagecus.append(cus[7])
-                    client_statuscus.append(cus[10])
+                    emailcus.append(cus[4])
+                    profile_imagecus.append(cus[5])
+                    client_statuscus.append(cus[7])
+                    precio_pago_prodcus.append(cus[8])
                     totalcus+= 1 
                 #endregion
 
@@ -249,6 +251,7 @@ def accessAdmin():
                                         "lastname": lastnamecus,
                                         "alias": aliascus,
                                         "email": emailcus,
+                                        "precio_pago_prod": precio_pago_prodcus,
                                         "profile_image": profile_imagecus,
                                         "client_status": client_statuscus
                                         },
@@ -297,6 +300,176 @@ def logoutUser():
         session.pop('id', None)
     return redirect(url_for('index'))
 
+@app.route("/cpaddreg", methods = ['PUT'])
+def cpAddReg():
+    if request.method != "PUT":
+        return jsonify({"status": 402, "msg": "Method not permitied"}), 402
+        
+    if "id" in session:
+        datares = request.get_json(force=True)
+        statusJsonCustomers = True
+        statusJsonReportCW = True
+        statusJsonReportLW = True
+        sesionActual = session['id']
+        logged = False
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios WHERE id = %s",(sesionActual,))
+        data = con.fetchall()
+        con.close()
+        jsonfy = {}
+        for col in data:
+            id = col[0]
+            if id == sesionActual:
+                jsonfy = {"status": 200, "msg": "Sesión iniciada", "Logged": True}
+                logged = True
+                con2 = mysql.connection.cursor()
+                con2.execute("select c.id, c.nombres, c.apellidos, c.alias, c.correo, c.foto_perfil, c.producto_asociado,c.estado_cliente, p.precio_producto from clientes c, productos p where creador_cliente = %s and c.producto_asociado = p.id",(sesionActual,))
+                data2 = con2.fetchall()
+                con2.close()
+
+                if len(data2) == 0:
+                   statusJsonCustomers = False
+                   return jsonify({"status": 401, "msg": "Action not permitied"}), 401
+                
+                for i in data2:
+                    if i[0] == int(datares["IARid"]):
+                        #session["id"] = id
+                        conIS = mysql.connection.cursor()
+                        conIS.execute("INSERT INTO liveone.reportes(usuario_reportado,usuario_reportador, id_producto, cantidad_venta, fecha_actualizacion, fecha_creacion) VALUES (%s, %s, %s, %s, %s, %s)", (datares["IARid"], sesionActual, i[6], datares["IARquantity"], datares["IARdate"], datares["IARdate"]))
+                        mysql.connection.commit()
+                        conIS.close()
+                        break
+                # region clientes
+                    
+                idcus = []
+                namecus = []
+                lastnamecus = []
+                aliascus = []
+                emailcus = []
+                profile_imagecus = []
+                client_statuscus = []
+                precio_pago_prodcus = []
+                totalcus = 0
+
+                for cus in data2:
+                    idcus.append(cus[0])
+                    namecus.append(cus[1])
+                    lastnamecus.append(cus[2])
+                    aliascus.append(cus[3])
+                    emailcus.append(cus[4])
+                    profile_imagecus.append(cus[5])
+                    client_statuscus.append(cus[7])
+                    precio_pago_prodcus.append(cus[8])
+                    totalcus+= 1 
+                #endregion
+
+                # region reportes semana actual
+                id_reporte = []
+                clientes_cus = []
+                nombres_cus = []
+                apellidos_cus = []
+                volumen_ventas = []
+                precio_producto_vendido = []
+                fecha_reportecus = []
+                estado_cliente_cus = []
+
+                con3 = mysql.connection.cursor()
+                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                data3 = con3.fetchall()
+                con3.close()
+                #endregion
+
+                #region Revisar si existen reportes SM-AC
+                if len(data3) == 0:
+                    statusJsonReportCW = False
+
+                for colx in data3:
+                    id_reporte.append(colx[0])
+                    clientes_cus.append(colx[1])
+                    nombres_cus.append(colx[4])
+                    apellidos_cus.append(colx[5])
+                    volumen_ventas.append(colx[2])
+                    fecha_reportecus.append(colx[3])
+                    estado_cliente_cus.append(colx[6])
+                    precio_producto_vendido.append(colx[7])
+                    #endregion
+
+                #region reportes semana pasada
+                id_reporteSmpa = []
+                clientes_cusSmpa = []
+                nombres_cusSmpa = []
+                apellidos_cusSmpa = []
+                volumen_ventasSmpa = []
+                precio_producto_vendidoSmpa = []
+                fecha_reportecusSmpa = []
+                estado_cliente_cusSmpa = []
+
+                con4 = mysql.connection.cursor()
+                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                data4 = con4.fetchall()
+                con4.close()
+                #endregion
+
+                #region Revisar si existen reportes SM-PA
+                if len(data4) == 0:
+                    statusJsonReportLW = False
+                
+                for colx in data4:
+                    id_reporteSmpa.append(colx[0])
+                    clientes_cusSmpa.append(colx[1])
+                    nombres_cusSmpa.append(colx[4])
+                    apellidos_cusSmpa.append(colx[5])
+                    volumen_ventasSmpa.append(colx[2])
+                    fecha_reportecusSmpa.append(colx[3])
+                    estado_cliente_cusSmpa.append(colx[6])
+                    precio_producto_vendidoSmpa.append(colx[7])
+                #endregion
+            
+                userinfo  = {
+                                    "customers": {
+                                        "status": statusJsonCustomers,
+                                        "total": totalcus,
+                                        "id": idcus,
+                                        "name": namecus,
+                                        "lastname": lastnamecus,
+                                        "alias": aliascus,
+                                        "email": emailcus,
+                                        "precio_pago_prod": precio_pago_prodcus,
+                                        "profile_image": profile_imagecus,
+                                        "client_status": client_statuscus
+                                        },
+                                        "reports": {
+                                            "current_week":{
+                                                "status": statusJsonReportCW,
+                                                "id_reporte": id_reporte,
+                                                "id_customer": clientes_cus,
+                                                "name": nombres_cus,
+                                                "lastname":apellidos_cus,
+                                                "volumen": volumen_ventas,
+                                                "precio_producto_vendido": precio_producto_vendido,
+                                                "report_date": fecha_reportecus,
+                                                "customer_status": estado_cliente_cus
+                                            },
+                                            "last_week": {
+                                                "status": statusJsonReportLW,
+                                                "id_reporte": id_reporteSmpa,
+                                                "id_customer": clientes_cusSmpa,
+                                                "name": nombres_cusSmpa,
+                                                "lastname":apellidos_cusSmpa,
+                                                "volumen": volumen_ventasSmpa,
+                                                "precio_producto_vendido": precio_producto_vendidoSmpa,
+                                                "report_date": fecha_reportecusSmpa,
+                                                "customer_status": estado_cliente_cusSmpa
+                                            }
+                                        },
+                                        "username": col[1],
+                                        "lastname": col[2],
+                                        "profile_image": col[6]
+                                    }
+        if logged != True:
+            return redirect(url_for('index'))
+        else:
+            return jsonify(userinfo), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=80)
