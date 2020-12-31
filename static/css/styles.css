@@ -37,7 +37,16 @@ header {
   /*box-shadow: 0 0 3px #fff;*/
 }
 
-/* for toggle behavior */
+#alertPrimarySystem,
+#alertDangerSystem {
+  position: fixed;
+  top: 10px;
+  left: 25%;
+  right: 25%;
+  width: 50%;
+  display: none;
+  opacity: 0.9;
+}
 
 #sidebar.active {
   margin-left: -17rem;

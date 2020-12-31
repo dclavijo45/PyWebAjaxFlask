@@ -191,7 +191,7 @@ def accessAdmin():
                 estado_cliente_cus = []
 
                 con3 = mysql.connection.cursor()
-                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and estado_reporte = 1 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data3 = con3.fetchall()
                 con3.close()
                 #endregion
@@ -222,7 +222,7 @@ def accessAdmin():
                 estado_cliente_cusSmpa = []
 
                 con4 = mysql.connection.cursor()
-                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and estado_reporte = 1 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data4 = con4.fetchall()
                 con4.close()
                 #endregion
@@ -340,7 +340,7 @@ def cpAddReg():
                     datares = request.get_json(force=True)
                     try:
                         conIS = mysql.connection.cursor()
-                        conIS.execute("UPDATE reportes SET estado_reporte = '0' WHERE(id = %s) and usuario_reportador = %s", (datares["id_registro"], sesionActual))
+                        conIS.execute("UPDATE reportes SET estado_reporte = 0 WHERE id = %s and usuario_reportador = %s", (datares["id_registro"], sesionActual),) 
                         mysql.connection.commit()
                         conIS.close()
                     except :
@@ -394,7 +394,7 @@ def cpAddReg():
                 estado_cliente_cus = []
 
                 con3 = mysql.connection.cursor()
-                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte != 0 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte = 1 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data3 = con3.fetchall()
                 con3.close()
                 #endregion
@@ -425,7 +425,7 @@ def cpAddReg():
                 estado_cliente_cusSmpa = []
 
                 con4 = mysql.connection.cursor()
-                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte != 0 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte = 1 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data4 = con4.fetchall()
                 con4.close()
                 #endregion

@@ -468,10 +468,6 @@ function deleteRegCusLu(form) {
   if (confirm("Borrar este registro?")) {
     let action = form.action;
     let method = "DELETE";
-    console.log({
-      name: form.elements[0].name,
-      value: form.elements[0].value,
-    });
     $.ajax({
       beforeSend: function (xhr, settings) {
         // if (
@@ -491,12 +487,21 @@ function deleteRegCusLu(form) {
       dataType: "json",
       success: function (info) {
         userinfo = info;
+        $("#alertPrimarySystem").html(`Registro borrado!`).fadeIn();
+        setTimeout(function () {
+          $("#alertPrimarySystem").fadeOut();
+        }, 2000);
         runAllBeforeUpdate();
       },
       error: function (jqXHR, status, error) {
-        alert(
-          "Registro no borrado, por favor informe a la administración el problema"
-        );
+        $("#alertDangerSystem")
+          .html(
+            `Registro no borrado, por favor informe a la administración el problema`
+          )
+          .fadeIn();
+        setTimeout(function () {
+          $("#alertDangerSystem").fadeOut();
+        }, 2000);
         console.log(`Estado: ${status}`);
         console.log(`Error: ${error}`);
       },
@@ -544,12 +549,22 @@ $("#btnSaveRegistercpa").click(() => {
     dataType: "json",
     success: function (info) {
       userinfo = info;
+      $("#alertPrimarySystem").html(`Registro guardado!`).fadeIn();
+      setTimeout(function () {
+        $("#alertPrimarySystem").fadeOut();
+      }, 2000);
+
       runAllBeforeUpdate();
     },
     error: function (jqXHR, status, error) {
-      alert(
-        "Datos no guardados, por favor informe a la administración el problema"
-      );
+      $("#alertDangerSystem")
+        .html(
+          `Registro no guardado, por favor informe a la administración el problema`
+        )
+        .fadeIn();
+      setTimeout(function () {
+        $("#alertDangerSystem").fadeOut();
+      }, 2000);
       console.log(`Estado: ${status}`);
       console.log(`Error: ${error}`);
     },
