@@ -300,13 +300,9 @@ def logoutUser():
         session.pop('id', None)
     return redirect(url_for('index'))
 
-@app.route("/cpaddreg", methods = ['PUT'])
+@app.route("/apirf", methods = ['PUT','DELETE', 'POST','GET'])
 def cpAddReg():
-    if request.method != "PUT":
-        return jsonify({"status": 402, "msg": "Method not permitied"}), 402
-        
     if "id" in session:
-        datares = request.get_json(force=True)
         statusJsonCustomers = True
         statusJsonReportCW = True
         statusJsonReportLW = True
@@ -331,14 +327,38 @@ def cpAddReg():
                    statusJsonCustomers = False
                    return jsonify({"status": 401, "msg": "Action not permitied"}), 401
                 
-                for i in data2:
-                    if i[0] == int(datares["IARid"]):
-                        #session["id"] = id
+                if request.method == "PUT":
+                    datares = request.get_json(force=True)
+                    for i in data2:
+                        if i[0] == int(datares["IARid"]):
+                            conIS = mysql.connection.cursor()
+                            conIS.execute("INSERT INTO liveone.reportes(usuario_reportado,usuario_reportador, id_producto, cantidad_venta, fecha_actualizacion, fecha_creacion) VALUES (%s, %s, %s, %s, %s, %s)", (datares["IARid"], sesionActual, i[6], datares["IARquantity"], datares["IARdate"], datares["IARdate"]))
+                            mysql.connection.commit()
+                            conIS.close()
+                            break
+                elif request.method == "DELETE":
+                    datares = request.get_json(force=True)
+                    try:
                         conIS = mysql.connection.cursor()
-                        conIS.execute("INSERT INTO liveone.reportes(usuario_reportado,usuario_reportador, id_producto, cantidad_venta, fecha_actualizacion, fecha_creacion) VALUES (%s, %s, %s, %s, %s, %s)", (datares["IARid"], sesionActual, i[6], datares["IARquantity"], datares["IARdate"], datares["IARdate"]))
+                        conIS.execute("UPDATE reportes SET estado_reporte = '0' WHERE(id = %s) and usuario_reportador = %s", (datares["id_registro"], sesionActual))
                         mysql.connection.commit()
                         conIS.close()
-                        break
+                    except :
+                        return redirect(url_for('index'))
+                elif request.method == "POST":
+                    datares = request.get_json(force=True)
+                    for i in data2:
+                        if i[0] == int(datares["id_usuario"]):
+                            try:
+                                conIS = mysql.connection.cursor()
+                                conIS.execute("UPDATE reportes SET usuario_reportado = %s, cantidad_venta = %s, fecha_actualizacion = %s WHERE (id = %s) and usuario_reportador = %s", (datares["id_usuario"],datares["volumen"], datares["fecha_act"], datares["id_reporte"], sesionActual))
+                                mysql.connection.commit()
+                                conIS.close()
+                            except :
+                                return redirect(url_for('index'))
+                            break
+                else:
+                    return redirect(url_for('index'))
                 # region clientes
                     
                 idcus = []
@@ -374,7 +394,7 @@ def cpAddReg():
                 estado_cliente_cus = []
 
                 con3 = mysql.connection.cursor()
-                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con3.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_ADD(CURDATE(), INTERVAL - WEEKDAY(CURDATE()) DAY) and date(r.fecha_actualizacion) <= DATE_ADD(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY ) ) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte != 0 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data3 = con3.fetchall()
                 con3.close()
                 #endregion
@@ -405,7 +425,7 @@ def cpAddReg():
                 estado_cliente_cusSmpa = []
 
                 con4 = mysql.connection.cursor()
-                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
+                con4.execute("SELECT r.id as id_reporte, r.usuario_reportado, r.cantidad_venta, r.fecha_actualizacion, c.nombres, c.apellidos, c.estado_cliente, p.precio_producto * r.cantidad_venta as valor_total from reportes r, clientes c, productos p where (date(r.fecha_actualizacion) >= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY ) and date(r.fecha_actualizacion) <= DATE_SUB(DATE_ADD(curdate(), INTERVAL - WEEKDAY(CURDATE()) DAY), INTERVAL 1 DAY)) and r.usuario_reportador = %s and c.producto_asociado = p.id and r.usuario_reportado = c.id and r.estado_reporte != 0 ORDER BY day(r.fecha_actualizacion) ASC;",(sesionActual,))
                 data4 = con4.fetchall()
                 con4.close()
                 #endregion
