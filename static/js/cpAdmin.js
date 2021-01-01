@@ -182,6 +182,7 @@ function loadVolumenBox() {
 
 // List users tab
 function loadListUsersAdminCus() {
+  let precioDePagoPorCus = 0;
   try {
     for (let i = 0; i < userinfo.reports.current_week.id_reporte.length; i++) {
       if (userinfo.reports.current_week.report_date[i].slice(0, 3) == "Mon") {
@@ -218,11 +219,21 @@ function loadListUsersAdminCus() {
         );
       }
 
+      for (let j = 0; j < userinfo.customers.id.length; j++) {
+        if (
+          userinfo.reports.current_week.id_customer[i] ==
+          userinfo.customers.id[j]
+        ) {
+          precioDePagoPorCus = userinfo.customers.precio_pago_prod[j];
+          break;
+        }
+      }
+
       ListUsersAdmin += `
     <div class="d-block">
-            <h6  class="text-center" style="display: inline-block;width:24%">${
-              userinfo.reports.current_week.name[i]
-            }</h6>
+            <h6 class="text-center" style="display: inline-block;width:24%" title="Precio: ${precioDePagoPorCus}">${
+        userinfo.reports.current_week.name[i]
+      }</h6>
             <h6 class="text-muted text-center" style="display: inline-block;width:24%">${diaRegistradoListUACus}/${userinfo.reports.current_week.report_date[
         i
       ].slice(5, 7)}/${userinfo.reports.current_week.report_date[i].slice(
@@ -252,6 +263,7 @@ function loadListUsersAdminCus() {
     }
     document.getElementById("ListUsersAdmin").innerHTML = ListUsersAdmin;
   } catch (e) {
+    console.log(e);
     document.getElementById(
       "ListUsersAdmin"
     ).innerHTML = `<h4 class="text-center text-dark d-block">No hay clientes</h4>`;
@@ -516,11 +528,17 @@ function deleteRegCusLu(form) {
 // Add register event !
 
 $("#btnSaveRegistercpa").click(() => {
-  if (
-    $("#selectorOpcionesCustomers").val() == 0 ||
-    $("#IARquantity").val() == 0
-  ) {
-    alert("Llena las opciones!");
+  if ($("#selectorOpcionesCustomers").val() == 0) {
+    $("#alertDangerSystem").html(`Selecciona un cliente!`).fadeIn();
+    setTimeout(function () {
+      $("#alertDangerSystem").fadeOut();
+    }, 2000);
+    return false;
+  } else if ($("#IARquantity").val() == 0) {
+    $("#alertDangerSystem").html(`Agrega un volumen de venta!`).fadeIn();
+    setTimeout(function () {
+      $("#alertDangerSystem").fadeOut();
+    }, 2000);
     return false;
   }
   let action = $("#BoxAddReg form").attr("action");
@@ -573,4 +591,42 @@ $("#btnSaveRegistercpa").click(() => {
     },
     timeout: 10000,
   });
+});
+
+// it's updating the data every 10 seconds
+// setInterval(() => {
+//   $.ajax({
+//     beforeSend: function (xhr, settings) {
+//       // if (
+//       //   !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+//       //   !this.crossDomain
+//       // ) {
+//       //   xhr.setRequestHeader("X-CSRFToken", csrf_token);
+//       // }
+//       console.clear();
+//       console.log("Consultado...");
+//     },
+//     url: "/apirf",
+//     type: "GET",
+//     dataType: "json",
+//     success: function (info) {
+//       userinfo = info;
+//       runAllBeforeUpdate();
+//     },
+//     error: function (jqXHR, status, error) {
+//       console.log(`Estado: ${status}`);
+//       console.log(`Error: ${error}`);
+//     },
+//     complete: function (jqXHR, status) {
+//       console.log(`Petición completada con estado: ${status}`);
+//     },
+//     timeout: 4500,
+//   });
+// }, 5000);
+
+// manage when the user press enter
+$("#IARquantity").on("keydown", function (e) {
+  if (e.which == 13) {
+    $("#btnSaveRegistercpa").click();
+  }
 });

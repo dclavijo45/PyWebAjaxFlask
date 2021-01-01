@@ -358,7 +358,13 @@ def cpAddReg():
                                 return redirect(url_for('index'))
                             break
                 else:
-                    return redirect(url_for('index'))
+                    pass
+                    # datares = request.get_json(force=True)
+                    # if datares["refresh"] == True:
+                    #     pass
+                    # else:
+                    #     return redirect(url_for('index'))
+                        
                 # region clientes
                     
                 idcus = []
