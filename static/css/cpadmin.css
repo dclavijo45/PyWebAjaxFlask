@@ -1,0 +1,142 @@
+.toggle-button-cpadmin {
+  font-size: 35px;
+  cursor: pointer;
+}
+
+.ftn-size17 {
+  font-size: 17px;
+}
+
+.prf-img-cpadmin {
+  min-height: 50px;
+  max-height: 50px;
+  min-width: 50px;
+  max-width: 50px;
+}
+.prf-imgv-cpadmin {
+  min-height: 63px;
+  max-height: 63px;
+  min-width: 63px;
+  max-width: 63px;
+}
+
+.ftn-size24 {
+  font-size: 24px;
+}
+
+.sys-base-cpadmin {
+  min-height: 240px;
+  max-height: 503px;
+}
+
+.hr1-fix-cpadmin {
+  opacity: 0;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.bttn-0 {
+  bottom: 0;
+}
+
+.title-blnc-cpadmin {
+  font-family: sans-serif;
+}
+
+.boxes-hg-wd-cpadmin {
+  height: 20%;
+  width: 320px;
+}
+
+.ftn-size20 {
+  font-size: 20px;
+}
+
+.subtitle-boxes-cpadmin {
+  opacity: 0.7;
+  font-size: 18px;
+}
+
+.opct-007 {
+  opacity: 0.7;
+}
+
+.opct-009 {
+  opacity: 0.9;
+}
+
+.bg-warn-vol-box-cpadmin {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.max-hg-387 {
+  max-height: 387px;
+}
+
+.col-box-reg-cus-cpadmin {
+  font-family: sans-serif;
+  font-size: 18px;
+  color: #505de9;
+  width: 49%;
+}
+
+.col-box-add-cus-cpadmin {
+  width: 43.5%;
+  text-align: right;
+  font-family: sans-serif;
+  font-size: 18px;
+  color: #8d92bb;
+}
+
+.square-btn-add-reg-cus {
+  width: 5.5%;
+  text-align: right;
+  font-size: 20px;
+  color: #171527;
+  cursor: pointer;
+}
+
+.title-col-reg-cus-cpadmin {
+  display: inline-block;
+  width: 24%;
+}
+
+.title-col2-reg-cus-cpadmin {
+  display: inline-block;
+  width: 12%;
+}
+
+.float-right {
+  float: right;
+}
+
+.w-24 {
+  width: 24%;
+}
+.w-23 {
+  width: 23%;
+}
+
+.w-1604 {
+  width: 16.4%;
+}
+
+.btn-options-add-reg-cpadmin {
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+.list-usr-md-cpadmin {
+  display: inline-block;
+  width: 24%;
+}
+
+.btn-edt-reg-cpadmin {
+  display: block;
+  float: right;
+}
+
+.sty1-list-usr-md-cpadmin {
+  font-size: 16px;
+  cursor: pointer;
+}

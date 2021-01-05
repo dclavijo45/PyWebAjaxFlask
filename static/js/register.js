@@ -17,7 +17,6 @@ $(document).ready(function () {
         //   xhr.setRequestHeader("X-CSRFToken", csrf_token);
         // }
         console.clear();
-        console.log("Consultado...");
         $("#btn_get").hide();
         btn_loading.style.display = "block";
         $("#btn_loading").show();
@@ -41,7 +40,7 @@ $(document).ready(function () {
           btn_get.innerText = info.msg;
           btn_get.disabled = true;
           setTimeout(() => {
-            alert("Redirect to admin");
+            window.location.href = "/cpadmin";
           }, 2000);
         } else {
           btn_get.innerText = info.msg;

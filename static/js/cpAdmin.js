@@ -231,30 +231,28 @@ function loadListUsersAdminCus() {
 
       ListUsersAdmin += `
     <div class="d-block">
-            <h6 class="text-center" style="display: inline-block;width:24%" title="Precio: ${precioDePagoPorCus}">${
+            <h6 class="text-center list-usr-md-cpadmin" title="Precio: ${precioDePagoPorCus}">${
         userinfo.reports.current_week.name[i]
       }</h6>
-            <h6 class="text-muted text-center" style="display: inline-block;width:24%">${diaRegistradoListUACus}/${userinfo.reports.current_week.report_date[
+            <h6 class="text-muted text-center list-usr-md-cpadmin">${diaRegistradoListUACus}/${userinfo.reports.current_week.report_date[
         i
       ].slice(5, 7)}/${userinfo.reports.current_week.report_date[i].slice(
         14,
         16
       )}</h6>
-            <h6 class="text-center" style="display: inline-block;width:24%">${
+            <h6 class="text-center list-usr-md-cpadmin">${
               userinfo.reports.current_week.volumen[i]
             }</h6>
-            <h6 class="text-center" style="display: inline-block;">${
+            <h6 class="text-center d-inline-block">${
               userinfo.reports.current_week.precio_producto_vendido[i]
             }</h6>
-            <h6 class="text-center" style="display: block;float: right;">
-                <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro"
-                    style="font-size: 16px;cursor:pointer"></i>
+            <h6 class="text-center btn-edt-reg-cpadmin">
+                <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar registro sty1-list-usr-md-cpamin"></i>
                     <form class="d-inline" action="/apirf">
                     <input type="hidden" name="id_registro" value="${
                       userinfo.reports.current_week.id_reporte[i]
                     }">
-                <i class="far fa-trash-alt text-danger optionsBarUserAdmin d-inline" title="Borrar registro"
-                    style="font-size: 16px;cursor:pointer" onclick="deleteRegCusLu(this.parentNode)"></i>
+                <i class="far fa-trash-alt text-danger optionsBarUserAdmin d-inline sty1-list-usr-md-cpadmin" title="Borrar registro" onclick="deleteRegCusLu(this.parentNode)"></i>
                     </form>
             </h6>
         </div>
