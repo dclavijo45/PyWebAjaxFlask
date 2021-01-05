@@ -1,22 +1,24 @@
 {% extends "base.html"%}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">{%endblock%}
 {% block title%}Login : LiveOne{% endblock %}
 
 {% block content%}
 <div class="d-block">
-    <div class="card mx-auto mt-4 w-50" id="cb">
-        <h3 class="text-center my-2">Iniciar sesión</h3>
+    <div class="card mx-auto box-login" id="cb">
+        <h3 class="text-center mb-4 mt-4">Iniciar sesión</h3>
         <form class="form pb-4 px-4" action="/login" method="POST">
             <!-- <input type="hidden" name="csrf_token" value="TOKEN_CRSF" /> -->
-            <input type="email" class="form-control mb-4 w-50 mx-auto" id="correo" name="correo"
+            <input type="email" class="form-control mb-4 mx-auto w-login" id="correo" name="correo"
                 placeholder="Escriba su correo" title="Escriba su correo" required autofocus>
-            <input type="password" class="form-control mb-4 w-50 mx-auto" name="clave" id="clave"
+            <input type="password" class="form-control mb-4 w-login mx-auto" name="clave" id="clave"
                 title="Escriba su contraseña" placeholder="Escriba su contraseña" required>
-            <button id="btn_get" class="btn btn-success mx-auto w-50" type="submit" style="display: block">Iniciar
+            <button id="btn_get" class="btn btn-success mx-auto btn-login" type="submit" style="display: block">Iniciar
                 sesión</button>
             <!-- <script>
                 let csrf_token = "TOKEN_CSRF;
             </script> -->
-            <button id="btn_loading" class="btn btn-primary mx-auto w-50" type="button" style="display: none"
+            <button id="btn_loading" class="btn btn-primary mx-auto w-login" type="button" style="display: none"
                 disabled><span id="span_msg" class="spinner-grow spinner-grow-sm" role="status"
                     aria-hidden="true"></span>
                 <span id="msg_btn"></span>
@@ -25,4 +27,11 @@
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+<footer class="mt-3">
+    <div class="position-fixed py-2 w-100 footer-login bg-footer-login">
+        <p class="text-center text-muted my-0">Dashboard LiveOne design by <a class="text-dark text-decoration-none"
+                href="#">Dclavijo45 || Training_user</a>. License <a class="text-warning text-decoration-none"
+                href="">MIT</a></p>
+    </div>
+</footer>
 {% endblock %}

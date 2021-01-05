@@ -1,0 +1,12 @@
+@media (min-width: 800px) {
+  .w-register {
+    width: 50%;
+  }
+}
+
+.bg-footer-register {
+  background-color: #f8f9fa;
+}
+.footer-register {
+  bottom: 0;
+}
