@@ -628,3 +628,9 @@ $("#IARquantity").on("keydown", function (e) {
     $("#btnSaveRegistercpa").click();
   }
 });
+
+// Fix list users qnt
+if (userinfo.customers.total == 0)
+  document.getElementById(
+    "ListUsersAdmin"
+  ).innerHTML = `<h4 class="text-center text-dark d-block">No hay clientes</h4>`;

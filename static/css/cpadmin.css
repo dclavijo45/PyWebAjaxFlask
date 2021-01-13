@@ -72,11 +72,14 @@
 .max-hg-387 {
   max-height: 387px;
 }
+.max-hg-395 {
+  max-height: 395px;
+}
 
 .col-box-reg-cus-cpadmin {
   font-family: sans-serif;
   font-size: 18px;
-  color: #505de9;
+  color: #616cdf;
   width: 49%;
 }
 
