@@ -65,17 +65,13 @@
         <small class="text-center title-col2-reg-cus-cpadmin">Capital</small>
         <small class="float-right">Opción</small>
     </div>
-    <!--System add register-->
+    <!--System add customer-->
     <div id="BoxLabelsAddReg" class="mt-1" style="display: none;">
-        <small class="text-center title-col-reg-cus-cpadmin">Cliente</small>
-        <small class="text-center title-col-reg-cus-cpadmin">Registrar como</small>
-        <small class="text-center title-col-reg-cus-cpadmin">Volumen</small>
-        <small class="text-center title-col2-reg-cus-cpadmin">Precio</small>
-        <small class="float-right">Opción</small>
+        <small class="d-block text-center text-dark">Rellena los datos del cliente nuevo</small>
     </div>
     <hr class="mt-0">
     <span id="ListUsersAdmin"></span>
-    <!--System add register-->
+    <!--System add customer-->
     <span class="form-group" id="BoxAddReg" style="display: none;">
         <form action="/apirf" method="POST">
             <select id="selectorOpcionesCustomers" class="form-control d-inline-block text-center w-24" name="IARid"
@@ -94,5 +90,5 @@
         </form>
     </span>
 </div>
-<script src="{{url_for('static', filename='js/cpAdmin.js')}}"></script>
+<script src="{{url_for('static', filename='js/cpaCustomers.js')}}"></script>
 {%endblock%}
