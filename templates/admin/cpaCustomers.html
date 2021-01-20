@@ -74,18 +74,31 @@
     <!--System add customer-->
     <span class="form-group" id="BoxAddReg" style="display: none;">
         <form action="/apirf" method="POST">
-            <select id="selectorOpcionesCustomers" class="form-control d-inline-block text-center w-24" name="IARid"
+            <input type="text" class="form-control margin-bottom-3" placeholder="Digite el nombre del cliente" required>
+            <input type="text" class="form-control margin-bottom-3" placeholder="Digite el apellido del cliente"
                 required>
+            <input type="text" class="form-control margin-bottom-3" placeholder="Asigne un alias para el cliente">
+            <select class="form-control margin-bottom-3" name="" id="">
+                <option hidden selected value="">Seleccione un tipo Identificación</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="TI">Targeta de identidad</option>
+                <option value="CE">Cédula de extranjería</option>
             </select>
-            <input class="form-control d-inline-block w-24" type="date" id="datenow" name="IARdate" id="IARdate"
-                required>
-            <input class="form-control d-inline-block text-center w-23" type="number" name="IARquantity"
-                id="IARquantity" placeholder="Cantidad" value="0" autofocus required>
-            <input class="form-control d-inline-block text-center w-1604" type="number" id="InputPricecpa" value="0">
-            <i id="btnNotSaveRegistercpa" class="fas fa-times text-danger mx-auto btn-options-add-reg-cpadmin"
+            <input type="number" class="form-control margin-bottom-3"
+                placeholder="Digite el número de documento del cliente" min="0">
+            <input type="email" class="form-control margin-bottom-3" placeholder="Digite el correo del cliente"
+                title="Digite el correo del cliente" required>
+            <!-- <input type="file"> -->
+            <select class="form-control margin-bottom-3" name="" id="">
+                <option hidden selected value="">Seleccione un producto</option>
+            </select>
+            <select class="form-control" id="selectorOpcionesCustomers" name="IARid" required>
+            </select>
+            <input class="form-control" type="date" id="datenow" name="IARdate" id="IARdate" required>
+            <!-- <i id="btnNotSaveRegistercpa" class="fas fa-times text-danger mx-auto btn-options-add-reg-cpadmin"
                 title="No guardar"></i>
             <i id="btnSaveRegistercpa" class="fas fa-check text-success btn-options-add-reg-cpadmin"
-                title="Guardar"></i>
+                title="Guardar"></i> -->
             <!--Toma el valor de acuerdo a la seleccion en el select-->
         </form>
     </span>

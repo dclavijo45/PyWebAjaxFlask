@@ -1,0 +1,5 @@
+_pycache_/
+.vscode/
+env/s
+test.py
+liveCheck.py
