@@ -42,8 +42,8 @@ CREATE TABLE clientes(
     producto_asociado int not null,
     creador_cliente int not null,
 	estado_cliente tinyint(1) not null default 1,
-    precio_diferente tinyint(1) not null default 0,
-    precio_de_pago double not null default 0,
+    /*precio_diferente tinyint(1) not null default 0,
+    precio_de_pago double not null default 0,*/
     foreign key(creador_cliente) references usuarios(id),
     foreign key(producto_asociado) references productos(id)
 );

@@ -151,3 +151,69 @@
 .w-13 {
   width: 13.5%;
 }
+
+.w-x {
+  width: 13.8%;
+  overflow-x: auto;
+}
+
+/* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+#ListUsersAdmin3 {
+  overflow-y: scroll;
+  max-height: 125px;
+  display: block;
+  position: relative;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar-button:increment::-webkit-scrollbar-button {
+  display: none;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar-thumb {
+  background-color: #8a7d7d;
+  border-radius: 3px;
+  border: 1px solid #f1f2f3;
+}
+
+#ListUsersAdmin3::-webkit-scrollbar-track {
+  background-color: #90989b;
+}
+
+/*Estilos de scroll horizontal*/
+.w-x::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.w-x::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+.w-x::-webkit-scrollbar-button:increment::-webkit-scrollbar-button {
+  display: none;
+}
+
+.w-x::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+.w-x::-webkit-scrollbar-thumb {
+  background-color: #8a7d7d;
+  border-radius: 3px;
+  border: 1px solid #f1f2f3;
+}
+
+.w-x::-webkit-scrollbar-track {
+  background-color: #90989b;
+}

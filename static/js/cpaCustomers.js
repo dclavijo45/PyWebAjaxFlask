@@ -1,15 +1,59 @@
 // insert data to view
 
 // List users tab
-function loadListUsersAdminCus() {}
+function loadListUsersAdminCus() {
+  let listUsersApi = "";
+  document.getElementById("ListUsersAdmin3").innerHTML = "";
+  if (listCus.id_cliente.length == 0) {
+    document.getElementById("ListUsersAdmin3").innerHTML = `
+      <h4 class="text-center text-dark d-block">No hay clientes</h4>
+      `;
+  } else {
+    for (let i = 0; i < listCus.id_cliente.length; i++) {
+      listUsersApi += `<div class="d-block text-center text-dark">
+            <span class="d-inline-block w-x">${listCus.nombres[i]} ${
+        listCus.apellidos[i]
+      }</span>
+            <span class="d-inline-block w-x">${listCus.alias[i]}</span>
+            <span class="d-inline-block w-x">${listCus.correo[i]}</span>
+            <span class="d-inline-block w-x">${
+              listCus.nombre_producto_asociado[i]
+            }</span>
+            <span class="d-inline-block w-x">${
+              listCus.precio_producto_asociado[i]
+            }</span>${
+        listCus.estado_cliente[i] == 1
+          ? `<span class="d-inline-block w-x">En servicio <i class="fas fa-circle text-success optionsBarUserAdmin" title="Cliente activo"></i></span>`
+          : `<span class="d-inline-block w-x">Sin servicio <i class="fas fa-circle text-danger optionsBarUserAdmin" title="Cliente inactivo"></i></span>`
+      }
+    <span class="d-inline-block w-x">
+    <i class="far fa-edit text-primary optionsBarUserAdmin" title="Editar cliente"></i>
+        <form class="d-inline" action="#">
+                <input type="hidden" name="id_registro" value="${
+                  listCus.id_cliente[i]
+                }">
+                <i class="far fa-trash-alt text-danger optionsBarUserAdmin d-inline sty1-list-usr-md-cpadmin" title="Borrar cliente" onclick="deleteRegCusLu(this.parentNode)"></i>
+        </form>
+        </div>
+        <hr>`;
+    }
+    document.getElementById("ListUsersAdmin3").innerHTML = listUsersApi;
+  }
+}
 
 // insert products available
 function addProductsSelectList() {
   let list = `<option hidden selected value="">Seleccione un producto</option>`;
-  for (let i = 0; i < listProds.nombres.length; i++) {
-    list += `<option value="${listProds.id[i]}">${listProds.nombres[i]}</option>`;
+  if (listProds.nombres.length == 0) {
+    document.getElementById(
+      "ListProductsSelect"
+    ).innerHTML = `<option hidden selected value="">No hay productos</option>`;
+  } else {
+    for (let i = 0; i < listProds.nombres.length; i++) {
+      list += `<option value="${listProds.id[i]}">${listProds.nombres[i]}</option>`;
+    }
+    document.getElementById("ListProductsSelect").innerHTML = list;
   }
-  document.getElementById("ListProductsSelect").innerHTML = list;
 }
 
 // run functions for add data
@@ -124,7 +168,7 @@ $("#btnSaveRegistercpa").click((e) => {
       $("#alertDangerSystem").fadeOut();
     }, 2000);
     return false;
-  } else if ($("#listProductsSelect").val() == 0) {
+  } else if ($("#ListProductsSelect").val() == 0) {
     $("#alertDangerSystem").html(`Selecciona un producto!`).fadeIn();
     setTimeout(function () {
       $("#alertDangerSystem").fadeOut();
@@ -154,14 +198,14 @@ $("#btnSaveRegistercpa").click((e) => {
     ),
     dataType: "json",
     success: function (info) {
+      listCus = info;
+      runAllBeforeUpdate();
       $("#formSubmitCus")[0].reset();
       console.log(info);
       $("#alertPrimarySystem").html(`Cliente guardado!`).fadeIn();
       setTimeout(function () {
         $("#alertPrimarySystem").fadeOut();
       }, 2000);
-
-      runAllBeforeUpdate();
     },
     error: function (jqXHR, status, error) {
       $("#alertDangerSystem")
@@ -185,12 +229,6 @@ $("#IARquantity").on("keydown", function (e) {
     $("#btnSaveRegistercpa").click();
   }
 });
-
-// Fix list users qnt
-if (userinfo.customers.total == 0)
-  document.getElementById(
-    "ListUsersAdmin2"
-  ).innerHTML = `<h4 class="text-center text-dark d-block">No hay clientes</h4>`;
 
 // set date now
 let dateNow = new Date();
