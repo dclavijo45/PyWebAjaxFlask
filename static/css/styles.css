@@ -37,6 +37,10 @@ header {
   /*box-shadow: 0 0 3px #fff;*/
 }
 
+#ListUsersAdmin2 {
+  width: 80%;
+}
+
 #alertPrimarySystem,
 #alertDangerSystem {
   position: fixed;

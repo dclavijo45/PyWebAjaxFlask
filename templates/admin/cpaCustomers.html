@@ -1,52 +1,28 @@
 {% extends 'baseAdmin.html' %}
 
 {%block head%}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/cpAdmin.css') }}">
 {%endblock%}
 
 {%block title%}Customers : LiveOne{%endblock%}
 
 {%block content%}
+<script>
+    let listProds = {{ prodsinfo | tojson}};
+    listProds = JSON.parse(listProds)
+    console.log("Productos: ", listProds)
+    let listCus = {{ cusinfo | tojson}};
+    listCus = JSON.parse(listCus)
+    console.log("Clientes: ", listCus)
+</script>
 <div id="alertPrimarySystem" class="alert alert-primary text-center mx-auto" role="alert"></div>
 <div id="alertDangerSystem" class="alert alert-danger text-center mx-auto" role="alert"></div>
 <div class="w-100">
     <h2 class="mb-4 text-center title-blnc-cpadmin">
-        Balance de esta semana
+        Total de clientes actuales
     </h2>
 </div>
-<div id="BoxClientes" class="p-3 bg-primary mx-auto boxes-hg-wd-cpadmin">
-    <i class="fas fa-users mx-2 text-light ftn-size-20"></i>
-    <small class="text-light text-center mx-3 subtitle-boxes-cpadmin">
-        Clientes alcanzados
-    </small>
-    <h3 id="qntCustomersAlcn" class="text-center text-light fw-bolder"></h3>
-    <small id="porcentajeCus1Alcn" class="text-center text-light d-block opct-007"></small>
-</div>
-<div id="BoxCapital" class="p-3 bg-success mx-auto boxes-hg-wd-cpadmin">
-    <i class="fas fa-dollar-sign mx-2 text-light ftn-size-20"></i>
-    <small class="text-light text-center mx-3 subtitle-boxes-cpadmin">
-        Capital total hasta hoy
-    </small>
-    <h3 id="capitalTotalCus1" class="text-center text-light fw-bolder opct-009"></h3>
-    <small class="text-center text-light d-block opct-007">
-        Total sin estimar gastos extras
-    </small>
-</div>
-<div class="p-3 bg-danger mx-auto boxes-hg-wd-cpadmin">
-    <i class="fas fa-database mx-2 text-light ftn-size-20"></i>
-    <small class="text-light text-center mx-3 subtitle-boxes-cpadmin">
-        Volumen de producto
-    </small>
-    <h3 id="volumenProductoTotalCus1" class="text-center text-light fw-bolder"></h3>
-    <small class="text-center text-light d-block bg-warn-vol-box-cpadmin">
-        Total sin estimar pérdidas generadas
-    </small>
-</div>
-<div id="ChartAdminP" class="border mt-3 mx-auto bg-light p-4 border-3 max-hg-387">
-    <canvas id="canvas"></canvas>
-</div>
-<div id="ListUsersAdminR" class="border mt-3 mx-auto bg-light p-4 border-3">
+<div id="ListUsersAdmin2" class="border mt-3 mx-auto bg-light p-4 border-3">
     <div>
         <h5 class="fw-bold d-inline-block col-box-reg-cus-cpadmin">
             CLIENTES ACTUALES
@@ -59,47 +35,60 @@
         <hr class="mb-0 mt-1">
     </div>
     <div id="BoxLabelsListUsersReg" class="mt-1" style="display: block;">
-        <small class="text-center title-col-reg-cus-cpadmin">Cliente</small>
-        <small class="text-center title-col-reg-cus-cpadmin">Registrado el</small>
-        <small class="text-center title-col-reg-cus-cpadmin">Volumen</small>
-        <small class="text-center title-col2-reg-cus-cpadmin">Capital</small>
-        <small class="float-right">Opción</small>
+        <small class="text-center d-inline-block w-13">Nombres</small>
+        <small class="text-center d-inline-block w-13">Alias</small>
+        <small class="text-center d-inline-block w-13">Correo</small>
+        <small class="text-center d-inline-block w-13">Producto</small>
+        <small class="text-center d-inline-block w-13">Precio</small>
+        <small class="text-center d-inline-block w-13">Estado</small>
+        <small class="text-center d-inline-block w-13">Opción</small>
     </div>
     <!--System add customer-->
     <div id="BoxLabelsAddReg" class="mt-1" style="display: none;">
         <small class="d-block text-center text-dark">Rellena los datos del cliente nuevo</small>
     </div>
     <hr class="mt-0">
-    <span id="ListUsersAdmin"></span>
+
+    <!--List customers-->
+    <span id="ListUsersAdmin3">
+        <div class="d-block text-dark">
+            <h6 class="d-inline-block w-13">Juan manuel toro lopez</h6>
+            <h6 class="d-inline-block w-13">El calvo</h6>
+            <h6 class="d-inline-block w-13">elcalvo@domain.com</h6>
+            <h6 class="d-inline-block w-13">awa</h6>
+            <h6 class="d-inline-block w-13">1200</h6>
+            <h6 class="d-inline-block w-13">Activo</h6>
+            <h6 class="d-inline-block w-13"><i>X</i><i>X</i></h6>
+        </div>
+    </span>
+
     <!--System add customer-->
     <span class="form-group" id="BoxAddReg" style="display: none;">
-        <form action="/apirf" method="POST">
-            <input type="text" class="form-control margin-bottom-3" placeholder="Digite el nombre del cliente" required>
-            <input type="text" class="form-control margin-bottom-3" placeholder="Digite el apellido del cliente"
-                required>
-            <input type="text" class="form-control margin-bottom-3" placeholder="Asigne un alias para el cliente">
-            <select class="form-control margin-bottom-3" name="" id="">
+        <form id="formSubmitCus" action="/apicus" method="POST">
+            <input type="text" name="nombreCliente" id="nombreClienteInput" class="form-control margin-bottom-3"
+                placeholder="Digite el nombre del cliente" required>
+            <input type="text" name="apellidoCliente" id="apellidoClienteInput" class="form-control margin-bottom-3"
+                placeholder="Digite el apellido del cliente" required>
+            <input type="text" name="aliasCliente" id="aliasClienteInput" class="form-control margin-bottom-3"
+                placeholder="Asigne un alias para el cliente [opcional]" title="Opcional">
+            <select class="form-control margin-bottom-3" name="tipoIdCliente" id="tipoIdClienteSelect">
                 <option hidden selected value="">Seleccione un tipo Identificación</option>
                 <option value="CC">Cédula de ciudadanía</option>
                 <option value="TI">Targeta de identidad</option>
                 <option value="CE">Cédula de extranjería</option>
             </select>
-            <input type="number" class="form-control margin-bottom-3"
-                placeholder="Digite el número de documento del cliente" min="0">
-            <input type="email" class="form-control margin-bottom-3" placeholder="Digite el correo del cliente"
-                title="Digite el correo del cliente" required>
+            <input type="number" name="numDocumentoCliente" id="numDocumentoClienteInput"
+                class="form-control margin-bottom-3" placeholder="Digite el número de documento del cliente" min="0">
+            <input type="email" name="correoCliente" id="correoClienteInput" class="form-control margin-bottom-3"
+                placeholder="Digite el correo del cliente [opcional]" title="Opcional">
             <!-- <input type="file"> -->
-            <select class="form-control margin-bottom-3" name="" id="">
-                <option hidden selected value="">Seleccione un producto</option>
+            <select id="ListProductsSelect" name="productoAsignadoCliente" class="form-control mb-3">
+
             </select>
-            <select class="form-control" id="selectorOpcionesCustomers" name="IARid" required>
-            </select>
-            <input class="form-control" type="date" id="datenow" name="IARdate" id="IARdate" required>
-            <!-- <i id="btnNotSaveRegistercpa" class="fas fa-times text-danger mx-auto btn-options-add-reg-cpadmin"
-                title="No guardar"></i>
-            <i id="btnSaveRegistercpa" class="fas fa-check text-success btn-options-add-reg-cpadmin"
-                title="Guardar"></i> -->
-            <!--Toma el valor de acuerdo a la seleccion en el select-->
+            <div class="d-block w-100 text-center"><button class="btn btn-danger mx-auto"
+                    id="btnNotSaveRegistercpa">Cancelar</button>
+                <button class="btn btn-success mx-auto" id="btnSaveRegistercpa">Guardar</button>
+            </div>
         </form>
     </span>
 </div>

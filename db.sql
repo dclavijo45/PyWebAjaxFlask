@@ -26,6 +26,7 @@ CREATE TABLE productos(
     creador_producto int not null,
     fecha_creacion date not null default now(),
     fecha_actualizacion date null default now(),
+    estado_producto tinyint(1) not null default 1,
     foreign key(creador_producto) references usuarios(id)
 );
 
@@ -41,6 +42,8 @@ CREATE TABLE clientes(
     producto_asociado int not null,
     creador_cliente int not null,
 	estado_cliente tinyint(1) not null default 1,
+    precio_diferente tinyint(1) not null default 0,
+    precio_de_pago double not null default 0,
     foreign key(creador_cliente) references usuarios(id),
     foreign key(producto_asociado) references productos(id)
 );

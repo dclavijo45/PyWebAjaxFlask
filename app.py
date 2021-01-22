@@ -7,6 +7,8 @@ import requests
 
 # csrf = CSRFProtect()
 app = Flask(__name__)
+port = 80
+hostA = '0.0.0.0'
 app.secret_key = "k#s!k#di//e(i4?&?85+u85*uu4--3+9r39##84r|3#$kkkey==/"
 # csrf.init_app(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -18,6 +20,11 @@ app.config["MYSQL_USER"] = "root"
 app.config["MYSQL_PASSWORD"] = ""
 app.config["MYSQL_DB"] = "liveone"
 mysql = MySQL(app)
+
+
+def fixStringClient(string):
+    fixed = str(string).replace("'", "").replace("*", "").replace('"', "").replace("+", "").replace("|", "").replace("%", "").replace("$", "").replace("&", "").replace("=", "").replace("?", "").replace('¡', "").replace("\a", "").replace("<", "").replace(">", "").replace("/", "").replace("[", "").replace("]", "").replace("(", "").replace("]", "").replace("´", "").replace(",", "").replace("!", "").replace("\n", "")
+    return fixed
 
 
 @app.route("/")
@@ -151,7 +158,6 @@ def accessAdmin():
                 jsonfy = {"status": 200,
                           "msg": "Sesión iniciada", "Logged": True}
                 logged = True
-                port = 81
                 urlGet = 'http://localhost:{0}/apirf'.format(port)
                 cookies = {'session': request.cookies.get('session')}
                 req = requests.get(urlGet, cookies=cookies)
@@ -180,15 +186,21 @@ def cpaCustomers():
                 jsonfy = {"status": 200,
                           "msg": "Sesión iniciada", "Logged": True}
                 logged = True
-                port = 81
-                urlGet = 'http://localhost:{0}/apirf'.format(port)
                 cookies = {'session': request.cookies.get('session')}
-                req = requests.get(urlGet, cookies=cookies)
+                urlRf = 'http://localhost:{0}/apirf'.format(port)
+                urlProd = 'http://localhost:{0}/apiprod'.format(port)
+                urlCus = 'http://localhost:{0}/apicus'.format(port)
+                req = requests.get(urlRf, cookies=cookies)
+                req2 = requests.get(urlProd, cookies=cookies)
+                req3 = requests.get(urlCus, cookies=cookies)
                 userinfo = req.json()
+                prodsinfo = req2.json()
+                cusinfo = req3.json()
+
         if logged != True:
             return redirect(url_for('index'))
 
-        return render_template("/admin/cpaCustomers.html", userinfo=json.dumps(userinfo, ensure_ascii=False), status=json.dumps(jsonfy, ensure_ascii=False))
+        return render_template("/admin/cpaCustomers.html", userinfo=json.dumps(userinfo, ensure_ascii=False), status=json.dumps(jsonfy, ensure_ascii=False), prodsinfo=json.dumps(prodsinfo, ensure_ascii=False), cusinfo=json.dumps(cusinfo, ensure_ascii=False))
     else:
         return redirect(url_for('index'))
 
@@ -201,7 +213,7 @@ def logoutUser():
 
 
 @app.route("/apirf", methods=['PUT', 'DELETE', 'POST', 'GET'])
-def cpAddReg():
+def manageRegisterInfo():
     if "id" in session:
         statusJsonCustomers = True
         statusJsonReportCW = True
@@ -212,21 +224,14 @@ def cpAddReg():
         con.execute("SELECT * FROM usuarios WHERE id = %s", (sesionActual,))
         data = con.fetchall()
         con.close()
-        jsonfy = {}
         for col in data:
             id = col[0]
             if id == sesionActual:
-                jsonfy = {"status": 200,
-                          "msg": "Sesión iniciada", "Logged": True}
                 logged = True
                 con2 = mysql.connection.cursor()
                 con2.execute("select c.id, c.nombres, c.apellidos, c.alias, c.correo, c.foto_perfil, c.producto_asociado,c.estado_cliente, p.precio_producto from clientes c, productos p where creador_cliente = %s and c.producto_asociado = p.id", (sesionActual,))
                 data2 = con2.fetchall()
                 con2.close()
-
-                # if len(data2) == 0:
-                #     statusJsonCustomers = False
-                #     return jsonify({"status": 401, "msg": "Action not permitied"}), 401
 
                 if request.method == "POST":
                     datares = request.get_json(force=True)
@@ -401,15 +406,199 @@ def cpAddReg():
         else:
             return jsonify(userinfo), 200
     else:
-        return "Not found 404"
+        return redirect(url_for('index'))
+
+
+@app.route('/apicus', methods=['PUT', 'DELETE', 'POST', 'GET'])
+def manageCustomers():
+    if 'id' in session:
+        sesionActual = session['id']
+        propietario = False
+        logged = False
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios WHERE id = %s", (sesionActual,))
+        data = con.fetchall()
+        con.close()
+        for col in data:
+            id = col[0]
+            if id == sesionActual:
+                logged = True
+
+                # region API REST
+                if request.method == 'POST':
+                    dataR = request.get_json(force=True)
+                    if len(dataR["nombreCliente"]) == 0 or len(dataR["apellidoCliente"]) == 0 or len(dataR["tipoIdCliente"]) == 0 or len(dataR["numDocumentoCliente"]) == 0 or len(dataR["productoAsignadoCliente"]) == 0:
+                        pass
+                    else:
+                        if len(dataR["aliasCliente"]) == 0:
+                            dataR["aliasCliente"] = "sin alias"
+                        if len(dataR["correoCliente"]) == 0:
+                            dataR["correoCliente"] = "sin correo"
+                        
+                        productoAsignado = fixStringClient(dataR["productoAsignadoCliente"])
+                        conV = mysql.connection.cursor()
+                        conV.execute("SELECT creador_producto FROM productos WHERE id = %s", (productoAsignado))
+                        dataV = conV.fetchall()
+                        conV.close()
+                        for val in dataV:
+                            if str(val[0]) == str(productoAsignado):
+                                propietario = True
+                                break
+                        if propietario == True:
+                            conx1 = mysql.connection.cursor()
+                            conx1.execute("INSERT INTO `clientes` (`nombres`, `apellidos`, `alias`, `tipo_identificacion`, `num_identificacion`, `correo`, `producto_asociado`, `creador_cliente`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (
+                                fixStringClient(dataR["nombreCliente"]),
+                                fixStringClient(dataR["apellidoCliente"]), fixStringClient(dataR["aliasCliente"]),
+                                fixStringClient(dataR["tipoIdCliente"]),
+                                fixStringClient(dataR["numDocumentoCliente"]),
+                                fixStringClient(dataR["correoCliente"]),
+                                fixStringClient(dataR["productoAsignadoCliente"]),
+                                sesionActual,
+                            ))
+                            mysql.connection.commit()
+                            conx1.close()
+                        else:
+                            pass
+                elif request.method == "GET":
+                    pass
+                elif request.method == "PUT":
+                    pass
+                elif request.method == "DELETE":
+                    pass
+                else:
+                    return redirect(url_for('index'))
+                # endregion
+
+                # region sistema de exportación de usuarios
+                id_customerR = []
+                nombre_customerR = []
+                apellidos_customerR = []
+                alias_customerR = []
+                tipo_identificacion_customerR = []
+                num_identificacion_customerR = []
+                correo_customerR = []
+                foto_perfil_customerR = []
+                nombre_producto_customerR = []
+                estado_customerR = []
+                id_producto_customerR = []
+                precio_producto_customerR = []
+
+                con2 = mysql.connection.cursor()
+                con2.execute("SELECT c.id, c.nombres, c.apellidos, c.alias, c.tipo_identificacion, c.num_identificacion,c.correo, c.foto_perfil, p.nombre_producto as producto_asociado, c.estado_cliente, p.id as id_producto, p.precio_producto as precio_producto FROM clientes c, productos p where c.producto_asociado=p.id and c.creador_cliente = %s", (sesionActual,))
+                data2 = con2.fetchall()
+                con2.close()
+
+                for col2 in data2:
+                    if col2[9] != 2:
+                        id_customerR.append(col2[0])
+                        nombre_customerR.append(col2[1])
+                        apellidos_customerR.append(col2[2])
+                        alias_customerR.append(col2[3])
+                        tipo_identificacion_customerR.append(col2[4])
+                        num_identificacion_customerR.append(col2[5])
+                        correo_customerR.append(col2[6])
+                        foto_perfil_customerR.append(col2[7])
+                        nombre_producto_customerR.append(col2[8])
+                        estado_customerR.append(col2[9])
+                        id_producto_customerR.append(col2[10])
+                        precio_producto_customerR.append(col2[11])
+
+                Customers = {
+                    "id_cliente": id_customerR,
+                    "nombres": nombre_customerR,
+                    "apellidos": apellidos_customerR,
+                    "alias": alias_customerR,
+                    "tipo_identificacion": tipo_identificacion_customerR,
+                    "numero_identificacion": num_identificacion_customerR,
+                    "correo": correo_customerR,
+                    "foto_perfil": foto_perfil_customerR,
+                    "nombre_producto_asociado": nombre_producto_customerR,
+                    "estado_cliente": estado_customerR,
+                    "id_producto_asociado": id_producto_customerR,
+                    "precio_producto_asociado": precio_producto_customerR
+                }
+                # endregion
+        if logged != True:
+            return redirect(url_for('index'))
+        else:
+            return jsonify(Customers), 200
+
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/apiprod', methods=['PUT', 'DELETE', 'POST', 'GET'])
+def manageProducts():
+    if 'id' in session:
+        sesionActual = session['id']
+        logged = False
+        con = mysql.connection.cursor()
+        con.execute("SELECT * FROM usuarios WHERE id = %s", (sesionActual,))
+        data = con.fetchall()
+        con.close()
+        for col in data:
+            id = col[0]
+            if id == sesionActual:
+                logged = True
+
+                # region sistema de exportación de usuarios
+                id_producto = []
+                nombre_producto = []
+                descripcion_producto = []
+                imagen_producto = []
+                precio_producto = []
+                cantidad_producto = []
+                observaciones_producto = []
+                fecha_creacion_producto = []
+                fecha_actualizacion_producto = []
+                estado_producto = []
+
+                con2 = mysql.connection.cursor()
+                con2.execute(
+                    "SELECT * FROM productos WHERE creador_producto = %s;", (sesionActual,))
+                data2 = con2.fetchall()
+                con2.close()
+
+                for col2 in data2:
+                    if col2[10] == 1:
+                        id_producto.append(col2[0])
+                        nombre_producto.append(col2[1])
+                        descripcion_producto.append(col2[2])
+                        imagen_producto.append(col2[3])
+                        precio_producto.append(col2[4])
+                        cantidad_producto.append(col2[5])
+                        observaciones_producto.append(col2[6])
+                        fecha_creacion_producto.append(col2[8])
+                        fecha_actualizacion_producto.append(col2[9])
+                        estado_producto.append(col2[10])
+
+                Products = {
+                    "id": id_producto,
+                    "nombres": nombre_producto,
+                    "descripcion": descripcion_producto,
+                    "imagen": imagen_producto,
+                    "precio": precio_producto,
+                    "cantidad": cantidad_producto,
+                    "observaciones": observaciones_producto,
+                    "fecha_creacion": fecha_creacion_producto,
+                    "fecha_actualizacion": fecha_actualizacion_producto
+                }
+                # endregion
+        if logged != True:
+            return redirect(url_for('index'))
+        else:
+            return jsonify(Products), 200
+
+    else:
+        return redirect(url_for('index'))
 
 
 @app.before_request
 def limit_remote_addr():
-    LISTIPGRNT = ['104.128.67.198', '191.95.144.133', '127.0.0.1', 'localhost']
+    LISTIPGRNT = ['191.95.144.49', '127.0.0.1', 'localhost']
     if request.remote_addr not in LISTIPGRNT:
         abort(403)  # Forbidden
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='localhost', port=81)
+    app.run(debug=True, host=hostA, port=port)
